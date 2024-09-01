@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -246,7 +246,7 @@ const Reservation = () => {
           </>
         )}
       </form>
-{/* 
+
       <Modal
         isOpen={isModalOpen}
         onClose={handleModalClose}
@@ -254,7 +254,7 @@ const Reservation = () => {
         title="Confirm Submission"
       >
         <p>Are you sure you want to submit this reservation form?</p>
-      </Modal> */}
+      </Modal>
     </div>
   );
 };
