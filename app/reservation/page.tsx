@@ -1,16 +1,15 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Modal from "@/components/ui/modal"; // Import the Modal component
+import Modal from "@/components/ui/modal";
 
 const verifyControlNumber = (controlNumber: string) => {
-  const mockData: {
-    [key: string]: { name: string; maxGuests: number };
-  } = {
+  const mockData: { [key: string]: { name: string; maxGuests: number } } = {
     "123456": { name: "John Doe", maxGuests: 5 },
     "654321": { name: "Jane Smith", maxGuests: 2 },
   };
@@ -40,9 +39,9 @@ const Reservation = () => {
     name: string;
     maxGuests: number;
   } | null>(null);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<ReservationFormInputs | null>(null);
+  const [fadeStage, setFadeStage] = useState(0);
 
   const {
     register,
@@ -69,9 +68,20 @@ const Reservation = () => {
     }
   }, [fields, append]);
 
+  // Multi-step fade-in effect
+  useEffect(() => {
+    const timeouts = [
+      setTimeout(() => setFadeStage(1), 50), // First stage
+      setTimeout(() => setFadeStage(2), 100), // Second stage
+      setTimeout(() => setFadeStage(3), 150), // Final stage
+    ];
+
+    return () => timeouts.forEach(clearTimeout); // Clean up timeouts on unmount
+  }, []);
+
   const onSubmit = (data: ReservationFormInputs) => {
     setFormData(data);
-    setIsModalOpen(true); // Open the modal on form submit
+    setIsModalOpen(true);
   };
 
   const handleVerifyControlNumber = () => {
@@ -90,21 +100,6 @@ const Reservation = () => {
     }
   };
 
-  const handleGuestsChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedGuests = parseInt(event.target.value);
-    setValue("guests", selectedGuests);
-
-    if (selectedGuests > fields.length) {
-      for (let i = fields.length; i < selectedGuests; i++) {
-        append({ full_name: "", age: 0, email: "", address: "" });
-      }
-    } else if (selectedGuests < fields.length) {
-      for (let i = fields.length; i > selectedGuests; i--) {
-        remove(i - 1);
-      }
-    }
-  };
-
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
@@ -112,18 +107,25 @@ const Reservation = () => {
   const handleModalConfirm = () => {
     if (formData) {
       console.log(formData);
-      // Handle form submission, e.g., send to API
     }
     setIsModalOpen(false);
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className={`flex items-center justify-center h-screen bg-rose-100`}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4 bg-white p-6 rounded shadow-md w-full max-w-md"
+        className={`space-y-6 bg-white p-8 rounded-lg shadow-lg border border-gray-300 w-full max-w-2xl min-h-[900px]  ${
+            fadeStage === 0
+              ? "opacity-0"
+              : fadeStage === 1
+              ? "opacity-25"
+              : fadeStage === 2
+              ? "opacity-50"
+              : "opacity-100"
+          } overflow-y-auto max-h-[80vh] sm:min-h-[500px] sm:max-w-sm md:min-h-[750px] md:max-w-xl lg:min-h-[800px] lg:max-w-xl small-screen-container`}
       >
-        <h1 className="text-2xl font-bold">Reservation Form</h1>
+        <h1 className="text-3xl font-bold text-rose-600">Reservation Form</h1>
 
         {!verifiedData && (
           <div>
@@ -136,7 +138,11 @@ const Reservation = () => {
                 {...register("control_number")}
                 className="mt-1 block w-full"
               />
-              <Button type="button" onClick={handleVerifyControlNumber}>
+              <Button
+                type="button"
+                className="bg-rose-500 text-white hover:bg-rose-600"
+                onClick={handleVerifyControlNumber}
+              >
                 Verify
               </Button>
             </div>
@@ -152,34 +158,18 @@ const Reservation = () => {
           <>
             <div>
               <p className="block text-sm font-medium text-gray-700">
-                Name: {verifiedData.name}
+                Name: <span className="font-semibold">{verifiedData.name}</span>
               </p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Number of Guests
-              </label>
-              <select
-                {...register("guests")}
-                onChange={handleGuestsChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              >
-                {[...Array(verifiedData.maxGuests)].map((_, index) => (
-                  <option key={index + 1} value={index + 1}>
-                    {index + 1}
-                  </option>
-                ))}
-              </select>
-              {errors.guests && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.guests.message}
-                </p>
-              )}
+              <p className="block text-sm font-medium text-gray-700">
+                Maximum Number of Guests: {verifiedData.maxGuests}
+              </p>
             </div>
 
             {fields.map((field, index) => (
-              <div key={index}>
-                <h2 className="text-lg font-semibold">Guest {index + 1}</h2>
+              <div key={index} className="space-y-4">
+                <h2 className="text-lg font-semibold text-gray-800">
+                  Guest {index + 1}
+                </h2>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Full Name
@@ -238,23 +228,57 @@ const Reservation = () => {
                     </p>
                   )}
                 </div>
+                {fields.length > 1 && (
+                  <Button
+                    type="button"
+                    onClick={() => remove(index)}
+                    className="bg-red-500 text-white hover:bg-red-600 mt-2"
+                  >
+                    Remove Guest
+                  </Button>
+                )}
               </div>
             ))}
-            <Button type="submit" className="w-full mt-4">
-              Submit
-            </Button>
+
+            {fields.length < (verifiedData?.maxGuests || 0) && (
+              <Button
+                type="button"
+                onClick={() =>
+                  append({
+                    full_name: "",
+                    age: 0,
+                    email: "",
+                    address: "",
+                  })
+                }
+                className="bg-rose-500 text-white hover:bg-rose-600 mt-4"
+              >
+                Add Another Guest
+              </Button>
+            )}
+
+            <div>
+              <Button
+                type="submit"
+                className="bg-rose-500 text-white hover:bg-rose-600 mt-6"
+              >
+                Submit
+              </Button>
+            </div>
           </>
         )}
       </form>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleModalClose}
-        onConfirm={handleModalConfirm}
-        title="Confirm Submission"
-      >
-        <p>Are you sure you want to submit this reservation form?</p>
-      </Modal>
+      {isModalOpen && (
+        <Modal
+          isOpen={isModalOpen}
+          title="Confirmation"
+          onClose={handleModalClose}
+          onConfirm={handleModalConfirm}
+        >
+          <p>Are you sure you want to submit the reservation?</p>
+        </Modal>
+      )}
     </div>
   );
 };
