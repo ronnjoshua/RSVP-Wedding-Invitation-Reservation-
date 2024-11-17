@@ -1,47 +1,37 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation"; // Use next/navigation's useRouter
 
 const HomePage = () => {
   const [isFlipping, setIsFlipping] = useState(false);
+  const router = useRouter(); // Correct use of useRouter from next/navigation
 
   const handleReservationClick = () => {
     setIsFlipping(true);
     setTimeout(() => {
-      window.location.href = "/reservation";
-    }, 600); // Duration should match the animation duration
+      router.push("/reservation"); // Navigate using Next.js router from next/navigation
+    }, 100); // Duration should match the animation duration
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-rose-100 relative overflow-hidden">
+    <div className="flex items-center justify-center h-screen relative overflow-hidden">
       {/* Decorative Elements */}
-      <div className="absolute inset-0 opacity-10 bg-[url('')] bg-cover bg-center pointer-events-none"></div>
+      <div className="absolute inset-0 pointer-events-none"></div>
       {/* Main Content */}
       <motion.div
-        className={`text-center mx-auto p-12 bg-white shadow-2xl rounded-xl border border-gray-300 relative w-full max-w-2xl min-h-[900px] overflow-y-auto max-h-[80vh]
-  sm:min-h-[500px] sm:max-w-sm md:min-h-[750px] md:max-w-xl lg:min-h-[800px] lg:max-w-xl small-screen-container ${
-    isFlipping ? "page-turn" : ""
-  }`} // Adjust min-height here
+        className={`form-container relative flex flex-col justify-center text-center mx-auto p-12 bg-white shadow-2xl rounded-xl border border-gray-300 w-full max-w-2xl min-h-[900px] overflow-y-auto max-h-[80vh]
+          sm:min-h-[500px] sm:max-w-sm md:min-h-[750px] md:max-w-xl lg:min-h-[800px] lg:max-w-xl bg-[url('/card_design/front_card.png')] bg-center bg-cover ${
+            isFlipping ? "page-turn" : ""
+          }`} // Adjust min-height here
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        {/* Header */}
-        <h1 className="text-6xl font-extrabold text-rose-600 mb-6">
-          Welcome to Our Wedding
-        </h1>
-
-        {/* Subtext */}
-        <p className="text-xl text-gray-700 mb-8">
-          Join us for a day of love, joy, and celebration. Please RSVP by
-          filling out the reservation form.
-        </p>
-
         {/* Reservation Button */}
         <Button
-          className="px-8 py-4 bg-rose-500 text-white font-semibold rounded-full shadow-lg hover:bg-rose-600 transition duration-300"
+          className="px-8 py-4 text-customGreen font-semibold rounded-full shadow-lg hover:bg-customHoverGreen hover:text-customLightGreen transition duration-300 bg-[url('/card_design/2.png')] bg-center bg-cover absolute bottom-[100px] left-1/2 transform -translate-x-1/2"
           onClick={handleReservationClick}
         >
           Make a Reservation

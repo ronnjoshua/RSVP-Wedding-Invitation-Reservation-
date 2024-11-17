@@ -21,6 +21,9 @@ const config = {
     },
     extend: {
       colors: {
+        customGreen: '#1c663c',
+        customHoverGreen: '#0f5d31',
+        customLightGreen: '#cadcd0',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
