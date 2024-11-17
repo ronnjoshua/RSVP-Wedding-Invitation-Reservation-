@@ -1,12 +1,32 @@
-// app/api/reservations/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
-import { findReservationByControlNumber, Reservation } from "./types";
+import { Reservation } from "./types";
+
+interface ReservationDocument {
+  _id: string;
+  control_number: {
+    [key: string]: {
+      name: string;
+      maxGuests: number;
+      guests: number;
+      guest_info: Array<{
+        full_name: string;
+        email: string;
+        address: string;
+      }>;
+      submitted: boolean;
+      submittedAt?: Date;
+    };
+  };
+}
 
 export async function GET(request: NextRequest) {
+  let connection;
   try {
     const url = new URL(request.url);
     const controlNumber = url.searchParams.get("controlNumber");
+    
+    console.log('Received control number:', controlNumber);
 
     if (!controlNumber) {
       return NextResponse.json(
@@ -15,8 +35,20 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    await connectToDatabase();
-    const reservation = await findReservationByControlNumber(controlNumber);
+    console.log('Connecting to database...');
+    connection = await connectToDatabase();
+    
+    if (!connection.readyState) {
+      throw new Error('Database connection failed');
+    }
+    console.log('Database connected successfully');
+
+    // Get the reservation and cast it to the correct type
+    const reservation = await Reservation.findOne({
+      [`control_number.${controlNumber}`]: { $exists: true }
+    }).lean() as ReservationDocument | null;
+
+    console.log('Raw reservation data:', reservation);
 
     if (!reservation) {
       return NextResponse.json(
@@ -25,132 +57,41 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const controlNumberData = reservation.control_number.get(controlNumber);
-    
-    // Check submission status
-    const isSubmitted = controlNumberData.submitted === true;
+    // Access the control number data using the type-safe approach
+    const controlNumberData = reservation.control_number[controlNumber];
+    console.log('Control number data:', controlNumberData);
 
-    return NextResponse.json({
-      ...reservation.toObject(),
-      control_number: controlNumberData,
-      submitted: isSubmitted,
-      submittedAt: controlNumberData.submittedAt || null
-    });
-  } catch (error) {
-    console.error("Error fetching reservation:", error);
-    return NextResponse.json(
-      { message: "Error fetching reservation" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    const data = await request.json();
-    const { control_number, guest_info } = data;
-
-    if (!control_number || !Array.isArray(guest_info)) {
+    if (!controlNumberData) {
       return NextResponse.json(
-        { message: "Control number and guest info are required" },
-        { status: 400 }
-      );
-    }
-
-    await connectToDatabase();
-
-    // First, check if reservation exists and is not submitted
-    const existingReservation = await Reservation.findOne({
-      [`control_number.${control_number}`]: { $exists: true }
-    });
-
-    if (!existingReservation) {
-      return NextResponse.json(
-        { message: "Reservation not found" },
+        { message: "Control number data not found" },
         { status: 404 }
       );
     }
 
-    const reservationData = existingReservation.control_number.get(control_number);
+    const responseData = {
+      control_number: controlNumberData,
+      submitted: controlNumberData.submitted || false,
+      submittedAt: controlNumberData.submittedAt || null
+    };
 
-    // Strict check for submission status
-    if (reservationData.submitted === true) {
+    console.log('Sending response:', responseData);
+    return NextResponse.json(responseData);
+
+  } catch (error) {
+    console.error("Error in reservation fetch:", error);
+    
+    if (!connection?.readyState) {
       return NextResponse.json(
-        {
-          message: "This reservation has already been submitted",
-          submittedAt: reservationData.submittedAt,
-          submitted: true
-        },
-        { status: 400 }
-      );
-    }
-
-    // Check guest limits
-    const currentGuests = reservationData.guests || 0;
-    const maxGuests = reservationData.maxGuests || 0;
-
-    if (currentGuests + guest_info.length > maxGuests) {
-      return NextResponse.json(
-        { message: "Cannot exceed maximum number of guests" },
-        { status: 400 }
-      );
-    }
-
-    // Use atomic update with strict conditions
-    const result = await Reservation.findOneAndUpdate(
-      {
-        _id: existingReservation._id,
-        [`control_number.${control_number}.submitted`]: { $ne: true }, // Must not be submitted
-        [`control_number.${control_number}`]: { $exists: true }  // Must exist
-      },
-      {
-        $set: {
-          [`control_number.${control_number}.submitted`]: true,
-          [`control_number.${control_number}.submittedAt`]: new Date(),
-          [`control_number.${control_number}.guests`]: currentGuests + guest_info.length,
-          [`control_number.${control_number}.guest_info`]: [
-            ...(reservationData.guest_info || []),
-            ...guest_info
-          ]
-        }
-      },
-      { 
-        new: true,
-        runValidators: true
-      }
-    );
-
-    // Double-check if update was successful
-    if (!result) {
-      return NextResponse.json(
-        { 
-          message: "Unable to submit reservation - it may have already been submitted",
-          submitted: true
-        },
-        { status: 400 }
-      );
-    }
-
-    const updatedData = result.control_number.get(control_number);
-
-    // Final verification
-    if (!updatedData || !updatedData.submitted) {
-      return NextResponse.json(
-        { message: "Reservation submission failed" },
+        { message: "Database connection failed" },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({
-      message: "Guests added successfully",
-      reservation: updatedData,
-      submitted: true
-    });
-
-  } catch (error) {
-    console.error("Error processing reservation:", error);
     return NextResponse.json(
-      { message: "Error processing reservation" },
+      { 
+        message: "Error fetching reservation",
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

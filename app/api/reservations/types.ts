@@ -1,4 +1,3 @@
-// app/api/reservations/types.ts
 import mongoose from "mongoose";
 
 export interface GuestInfo {
@@ -16,44 +15,23 @@ export interface ReservationData {
   submittedAt?: Date;
 }
 
-// Schemas
-export const guestInfoSchema = new mongoose.Schema({
-  full_name: { type: String },
-  email: { type: String },
-  address: { type: String },
+const guestInfoSchema = new mongoose.Schema({
+  full_name: { type: String, required: true },
+  email: { type: String, required: true },
+  address: { type: String, required: true },
 });
 
-export const reservationSchema = new mongoose.Schema({
+const reservationSchema = new mongoose.Schema({
   control_number: {
-    type: Map,
-    of: new mongoose.Schema({
-      name: { type: String },
-      maxGuests: { type: Number },
-      guests: { type: Number, default: 1 },
-      guest_info: [guestInfoSchema],
-      submitted: { type: Boolean, default: false },
-      submittedAt: { type: Date }
-    }),
-  },
+    type: Object,
+    required: true,
+    _id: false,
+    default: {},
+  }
+}, {
+  timestamps: true,
+  strict: false // This allows dynamic control number keys
 });
 
-// Model
-export const Reservation = mongoose.models.Reservation || mongoose.model("Reservation", reservationSchema);
-
-// Helper function
-export async function findReservationByControlNumber(controlNumber: string) {
-  return await Reservation.findOne({
-    $expr: {
-      $in: [
-        controlNumber,
-        {
-          $map: {
-            input: { $objectToArray: "$control_number" },
-            as: "item",
-            in: "$$item.k",
-          },
-        },
-      ],
-    },
-  });
-}
+export const Reservation = (mongoose.models.Reservation as mongoose.Model<any>) || 
+  mongoose.model("Reservation", reservationSchema);

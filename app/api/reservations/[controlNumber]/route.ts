@@ -6,55 +6,145 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { controlNumber: string } }
 ) {
+  let connection;
   try {
-    const { controlNumber } = params;
+    const controlNumber = params.controlNumber;
     const data = await request.json();
-    const { name, maxGuests, guest_info } = data;
+    console.log("1. Received control number:", controlNumber);
+    console.log("2. Received data:", data);
 
-    await connectToDatabase();
-    const reservation = await Reservation.findOne({
-      [`control_number.${controlNumber}`]: { $exists: true },
-    });
+    if (!controlNumber) {
+      return NextResponse.json(
+        { message: "Control number is required" },
+        { status: 400 }
+      );
+    }
 
-    if (!reservation) {
+    // Connect to database
+    connection = await connectToDatabase();
+    
+    if (!connection.readyState) {
+      throw new Error('Database connection failed');
+    }
+
+    // Find the current reservation and log the raw result
+    const currentReservation = await Reservation.findOne({
+      [`control_number.${controlNumber}`]: { $exists: true }
+    }).lean(); // Use lean() to get plain JavaScript object
+
+    console.log("3. Full reservation document:", JSON.stringify(currentReservation, null, 2));
+
+    if (!currentReservation) {
       return NextResponse.json(
         { message: "Reservation not found" },
         { status: 404 }
       );
     }
 
-    const reservationData = reservation.control_number.get(controlNumber);
+    // Log the control_number object
+    console.log("4. Control number object:", currentReservation.control_number);
 
-    // Update basic information
-    if (name) reservationData.name = name;
-    if (maxGuests) reservationData.maxGuests = maxGuests;
+    // Check if the specific control number exists
+    if (!currentReservation.control_number || !currentReservation.control_number[controlNumber]) {
+      return NextResponse.json(
+        { message: `Reservation with control number ${controlNumber} not found` },
+        { status: 404 }
+      );
+    }
 
-    // Handle guest information replacement
-    if (Array.isArray(guest_info)) {
-      // Validate against maxGuests before updating
-      if (guest_info.length > reservationData.maxGuests) {
+    const currentData = currentReservation.control_number[controlNumber];
+    console.log("5. Current data for this control number:", currentData);
+
+    // Check if already submitted
+    if (currentData.submitted) {
+      return NextResponse.json(
+        { message: "This reservation has already been submitted" },
+        { status: 400 }
+      );
+    }
+
+    // Update the guest information
+    if (Array.isArray(data.guest_info)) {
+      // Validate guest count
+      if (data.guest_info.length > currentData.maxGuests) {
         return NextResponse.json(
-          { message: "Cannot exceed the maximum number of guests" },
+          { 
+            message: `Cannot exceed the maximum number of guests (${currentData.maxGuests})` 
+          },
           { status: 400 }
         );
       }
 
-      // Replace entire guest_info array instead of appending
-      reservationData.guest_info = guest_info;
-      reservationData.guests = guest_info.length;
+      // Log the update operation we're about to perform
+      console.log("6. Attempting to update with:", {
+        query: { [`control_number.${controlNumber}`]: { $exists: true } },
+        update: {
+          [`control_number.${controlNumber}.guest_info`]: data.guest_info,
+          [`control_number.${controlNumber}.guests`]: data.guest_info.length,
+          [`control_number.${controlNumber}.submitted`]: true,
+          [`control_number.${controlNumber}.submittedAt`]: new Date()
+        }
+      });
+
+      // Update using updateOne
+      const updateResult = await Reservation.updateOne(
+        { [`control_number.${controlNumber}`]: { $exists: true } },
+        {
+          $set: {
+            [`control_number.${controlNumber}.guest_info`]: data.guest_info,
+            [`control_number.${controlNumber}.guests`]: data.guest_info.length,
+            [`control_number.${controlNumber}.submitted`]: true,
+            [`control_number.${controlNumber}.submittedAt`]: new Date()
+          }
+        }
+      );
+
+      console.log("7. Update result:", updateResult);
+
+      if (updateResult.modifiedCount === 0) {
+        return NextResponse.json(
+          { message: "Failed to update reservation" },
+          { status: 500 }
+        );
+      }
+
+      // Fetch and log the updated document
+      const updatedReservation = await Reservation.findOne({
+        [`control_number.${controlNumber}`]: { $exists: true }
+      }).lean();
+
+      console.log("8. Updated reservation:", JSON.stringify(updatedReservation, null, 2));
+
+      return NextResponse.json({
+        message: "Reservation updated successfully",
+        data: {
+          control_number: updatedReservation.control_number[controlNumber],
+          submitted: true,
+          submittedAt: new Date()
+        }
+      });
     }
 
-    reservation.control_number.set(controlNumber, reservationData);
-    await reservation.save();
-
-    return NextResponse.json({
-      message: "Reservation updated successfully",
-      reservation: reservationData,
-    });
-  } catch (error) {
-    console.error("Error updating reservation:", error);
     return NextResponse.json(
-      { message: "Error updating reservation" },
+      { message: "No guest information provided" },
+      { status: 400 }
+    );
+
+  } catch (error) {
+    console.error("Detailed error:", error);
+    
+    if (!connection?.readyState) {
+      return NextResponse.json(
+        { message: "Database connection failed" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(
+      { 
+        message: "Error updating reservation",
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

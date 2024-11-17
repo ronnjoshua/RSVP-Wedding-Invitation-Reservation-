@@ -120,7 +120,7 @@ const ReservationPage = ({ params }: { params: { controlNumber: string } }) => {
   const handleModalConfirm = async () => {
     if (formData) {
       try {
-        const response = await fetch(`/api/reservations/${controlNumber}`, {
+        const response = await fetch(`/api/reservations/${params.controlNumber}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
