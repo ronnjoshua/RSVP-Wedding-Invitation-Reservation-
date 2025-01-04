@@ -1,27 +1,7 @@
-// app/api/reservations/[controlNumber]/route.ts
+// route.ts
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
-import { Reservation } from "../types";
-import mongoose from "mongoose";
-
-// Define the type for the lean document
-interface LeanReservation {
-  _id: mongoose.Types.ObjectId;
-  control_number: {
-    [key: string]: {
-      name: string;
-      maxGuests: number;
-      guests: number;
-      guest_info: Array<{
-        full_name: string;
-        email: string;
-        address: string;
-      }>;
-      submitted: boolean;
-      submittedAt?: Date;
-    };
-  };
-}
+import { Reservation, ReservationType } from "../types";
 
 export async function GET(
   request: NextRequest,
@@ -46,7 +26,7 @@ export async function GET(
 
     const reservation = await Reservation.findOne({
       [`control_number.${controlNumber}`]: { $exists: true }
-    }).lean() as LeanReservation;
+    }).lean().exec() as ReservationType;
 
     if (!reservation || !reservation.control_number) {
       return NextResponse.json(
@@ -114,7 +94,7 @@ export async function PATCH(
 
     const currentReservation = await Reservation.findOne({
       [`control_number.${controlNumber}`]: { $exists: true }
-    }).lean() as LeanReservation;
+    }).lean().exec() as ReservationType;
 
     if (!currentReservation || !currentReservation.control_number) {
       return NextResponse.json(
