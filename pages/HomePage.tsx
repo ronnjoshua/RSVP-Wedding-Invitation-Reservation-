@@ -31,7 +31,7 @@ const HomePage = () => {
       >
         {/* Reservation Button */}
         <Button
-          className="px-8 py-4 text-customGreen font-semibold rounded-full shadow-lg hover:bg-customHoverGreen hover:text-customLightGreen transition duration-300 bg-[url('/card_design/2.png')] bg-center bg-cover absolute bottom-[100px] left-1/2 transform -translate-x-1/2"
+          className="px-8 py-4 text-customGreen font-semibold rounded-full shadow-lg hover:bg-customHoverLilac hover:text-customDarkLilac transition duration-300 bg-[url('/card_design/2.png')] bg-center bg-cover absolute bottom-[100px] left-1/2 transform -translate-x-1/2"
           onClick={handleReservationClick}
         >
           Make a Reservation

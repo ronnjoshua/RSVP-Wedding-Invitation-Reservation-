@@ -112,7 +112,7 @@ const Reservation = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-rose-100">
+    <div className="flex items-center justify-center h-screen bg-purple-100">
       <form
         onSubmit={handleSubmit(handleVerifyControlNumber)}
         className={`space-y-6 bg-white p-8 rounded-lg shadow-lg border border-gray-300 w-full max-w-2xl 
@@ -125,10 +125,10 @@ const Reservation = () => {
           bg-[url('/card_design/2.png')] bg-center bg-cover 
           flex flex-col justify-center`}
       >
-        <h1 className="text-3xl font-bold text-rose-600">Reservation Form</h1>
+        <h1 className="text-3xl font-bold text-purple-400">Reservation Form</h1>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 border-b-purple-200">
             Control Number
           </label>
           <div className="flex space-x-2">

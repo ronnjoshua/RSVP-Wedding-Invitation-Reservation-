@@ -57,8 +57,37 @@ const ReservationPage = ({ params }: { params: { controlNumber: string } }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fadeStage, setFadeStage] = useState(0);
   const [formData, setFormData] = useState<ReservationFormInputs | null>(null);
-  const [verifiedData, setVerifiedData] = useState<VerifiedData | null>(null);
+
+
+ // Add these lines here ↓
+  const [verifiedData, setVerifiedData] = useState<ControlNumberData | null>(null);
   const { controlNumber } = params;
+
+  // Add the useEffect here ↓
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (controlNumber) {
+          const response = await fetch(`/api/reservations/${controlNumber}`);
+          const result = await response.json();
+          
+          if (response.ok) {
+            setVerifiedData(result.control_number[controlNumber]);
+          } else {
+            console.error("Failed to fetch reservation data:", result);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching reservation data:", error);
+      }
+    };
+    fetchData();
+  }, [controlNumber]);
+
+
+
+
+  
   const {
     register,
     handleSubmit,
@@ -164,10 +193,10 @@ const ReservationPage = ({ params }: { params: { controlNumber: string } }) => {
         <h1 className="text-3xl font-bold text-rose-600">Reservation Form</h1>
         <div>
           <p className="block text-sm font-medium text-gray-700">
-            Name: <span className="font-semibold">{}</span>
+            Name: <span className="font-semibold">{verifiedData?.name || 'Loading...'}</span>
           </p>
           <p className="block text-sm font-medium text-gray-700">
-            Maximum Number of Guests:
+            Maximum Number of Guests: <span className="font-semibold">{verifiedData?.maxGuests || 'Loading...'}</span>
           </p>
         </div>
 
