@@ -15,6 +15,12 @@ export interface ReservationData {
   submittedAt?: Date;
 }
 
+export interface ReservationDocument extends mongoose.Document {
+  control_number: {
+    [key: string]: ReservationData;
+  };
+}
+
 const guestInfoSchema = new mongoose.Schema({
   full_name: { type: String, required: true },
   email: { type: String, required: true },
@@ -30,8 +36,8 @@ const reservationSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true,
-  strict: false // This allows dynamic control number keys
+  strict: false
 });
 
-export const Reservation = (mongoose.models.Reservation as mongoose.Model<any>) || 
-  mongoose.model("Reservation", reservationSchema);
+export const Reservation = (mongoose.models.Reservation as mongoose.Model<ReservationDocument>) || 
+  mongoose.model<ReservationDocument>("Reservation", reservationSchema);
