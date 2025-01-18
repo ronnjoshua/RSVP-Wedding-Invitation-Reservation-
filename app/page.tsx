@@ -338,7 +338,7 @@ const WeddingInvitation = () => {
                   <Image
                     width={800}
                     height={200}
-                    src="/card_design/top_flower.jpg"
+                    src="/card_design/top_flower.webp"
                     alt="Lilac flowers"
                     className="w-full object-contain"
                     priority
@@ -423,7 +423,7 @@ const WeddingInvitation = () => {
                   <Image
                     width={800}
                     height={200}
-                    src="/card_design/top_flower.jpg"
+                    src="/card_design/top_flower.webp"
                     alt="Lilac flowers"
                     className="w-full object-contain"
                     priority
@@ -471,7 +471,7 @@ const WeddingInvitation = () => {
                         <Image
                           width={800}
                           height={200}
-                          src="/card_design/top_flower.jpg"
+                          src="/card_design/top_flower.webp"
                           alt="Lilac flowers"
                           className="w-full object-contain"
                           priority
@@ -488,7 +488,7 @@ const WeddingInvitation = () => {
                         <Image
                           width={800}
                           height={200}
-                          src="/card_design/top_flower.jpg"
+                          src="/card_design/top_flower.webp"
                           alt="Lilac flowers"
                           className="w-full object-contain"
                           priority
@@ -564,7 +564,7 @@ const WeddingInvitation = () => {
                         <Image
                           width={800}
                           height={200}
-                          src="/card_design/top_flower.jpg"
+                          src="/card_design/top_flower.webp"
                           alt="Lilac flowers"
                           className="w-full object-contain"
                           priority
@@ -581,7 +581,7 @@ const WeddingInvitation = () => {
                         <Image
                           width={800}
                           height={200}
-                          src="/card_design/top_flower.jpg"
+                          src="/card_design/top_flower.webp"
                           alt="Lilac flowers"
                           className="w-full object-contain"
                           priority
