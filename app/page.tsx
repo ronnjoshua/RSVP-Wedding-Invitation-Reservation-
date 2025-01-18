@@ -205,6 +205,19 @@ const WeddingInvitation = () => {
             --sidepage-flower-header-offset: -80px;
             --sidepage-flower-footer-offset: -80px;
           }
+          .book-pages-container {
+            flex-direction: column;
+            gap: 1rem;
+          }
+          
+          .book-page-left, .book-page-right {
+            width: 100%;
+            max-width: none;
+          }
+
+          .book-spine {
+            display: none;
+          }
         }
         @media (min-width: 769px) {
           :root {
@@ -423,7 +436,7 @@ const WeddingInvitation = () => {
           {/* Side Pages */}
           {showSidePages && (
             <div className="relative w-full perspective-[2000px]">
-              <div className="relative flex justify-center items-stretch min-h-[750px] md:min-h-[850px]">
+              <div className="relative book-pages-container flex md:flex-row flex-col justify-center items-stretch min-h-[750px] md:min-h-[850px] gap-4 md:gap-0">
                 {/* Left Page Container */}
                 <motion.div
                   className="w-full max-w-2xl book-page-left flex"
@@ -511,7 +524,7 @@ const WeddingInvitation = () => {
 
                 {/* Book Spine */}
                 <motion.div 
-                  className="hidden md:block w-1 bg-gradient-to-r from-gray-300 to-gray-200 shadow-inner self-stretch"
+                  className="book-spine hidden md:block w-1 bg-gradient-to-r from-gray-300 to-gray-200 shadow-inner self-stretch"
                   initial={{ scaleY: 0, opacity: 0 }}
                   animate={{ scaleY: 1, opacity: 1 }}
                   transition={{ delay: 0.3, duration: 0.3 }}
