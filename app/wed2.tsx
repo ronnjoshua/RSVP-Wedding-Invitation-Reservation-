@@ -19,7 +19,7 @@ const greatVibes = Great_Vibes({
 });
 
 // Add navigation helper functions
-type PageType = 'main' | 'calendar' | 'location' | 'reserve';
+type PageType = 'main' | 'calendar' | 'location';
 
 const getNextPage = (currentPage: PageType): PageType => {
   switch (currentPage) {
@@ -28,8 +28,6 @@ const getNextPage = (currentPage: PageType): PageType => {
     case 'calendar':
       return 'location';
     case 'location':
-      return 'reserve';
-    case 'reserve':
       return 'main';
   }
 };
@@ -37,13 +35,11 @@ const getNextPage = (currentPage: PageType): PageType => {
 const getPreviousPage = (currentPage: PageType): PageType => {
   switch (currentPage) {
     case 'main':
-      return 'reserve';
-    case 'reserve':
       return 'location';
-    case 'location':
-      return 'calendar';
     case 'calendar':
       return 'main';
+    case 'location':
+      return 'calendar';
   }
 };
 
@@ -53,6 +49,100 @@ const WeddingInvitation = () => {
   const [showSidePages, setShowSidePages] = useState(false);
   const [currentPage, setCurrentPage] = useState<PageType>('main');
   const router = useRouter();
+
+  type Direction = 'forward' | 'backward';
+  const [direction, setDirection] = useState<Direction>('forward');
+  
+  // Add these animation variants
+  const pageAnimationVariants = {
+    // For right page when going forward
+    rightPageExit: {
+      rotateY: -180,
+      x: '-50%',
+      opacity: 0,
+      filter: "brightness(0.8)",
+      boxShadow: "-20px 0 20px rgba(0,0,0,0.2)",
+      transformOrigin: 'center left',
+      transition: {
+        type: "spring",
+        stiffness: 45,
+        damping: 15,
+        mass: 0.5
+      }
+    },
+    // For left page when going forward
+    leftPageEnter: {
+      rotateY: 0,
+      x: 0,
+      opacity: 1,
+      filter: "brightness(1)",
+      boxShadow: "none",
+      transformOrigin: 'center left',
+      transition: {
+        type: "spring",
+        stiffness: 45,
+        damping: 15,
+        mass: 0.5
+      }
+    },
+    // For right page when going backward
+    rightPageEnter: {
+      rotateY: 0,
+      x: 0,
+      opacity: 1,
+      filter: "brightness(1)",
+      boxShadow: "none",
+      transformOrigin: 'center right',
+      transition: {
+        type: "spring",
+        stiffness: 45,
+        damping: 15,
+        mass: 0.5
+      }
+    },
+    // For left page when going backward
+    leftPageExit: {
+      rotateY: 180,
+      x: '50%',
+      opacity: 0,
+      filter: "brightness(0.8)",
+      boxShadow: "20px 0 20px rgba(0,0,0,0.2)",
+      transformOrigin: 'center right',
+      transition: {
+        type: "spring",
+        stiffness: 45,
+        damping: 15,
+        mass: 0.5
+      }
+    },
+    // Initial states
+    initialLeft: {
+      rotateY: 180,
+      x: '50%',
+      opacity: 0,
+      transformOrigin: 'center right',
+      filter: "brightness(0.8)",
+      boxShadow: "20px 0 20px rgba(0,0,0,0.2)"
+    },
+    initialRight: {
+      rotateY: -180,
+      x: '-50%',
+      opacity: 0,
+      transformOrigin: 'center left',
+      filter: "brightness(0.8)",
+      boxShadow: "-20px 0 20px rgba(0,0,0,0.2)"
+    }
+  };
+
+  const handleNextPage = () => {
+    setDirection('forward');
+    setCurrentPage(getNextPage(currentPage));
+  };
+  
+  const handlePreviousPage = () => {
+    setDirection('backward');
+    setCurrentPage(getPreviousPage(currentPage));
+  };
 
   const handleReservationClick = () => {
     setIsPressed(true);
@@ -124,24 +214,11 @@ const WeddingInvitation = () => {
       <div className="relative book-pages-container flex md:flex-row flex-col justify-center items-stretch min-h-[750px] md:min-h-[850px] gap-4 md:gap-0">
         {/* Left Page Container */}
         <motion.div
-          className="w-full max-w-2xl book-page-left flex"
-          initial={{ 
-            rotateY: 180,
-            x: '50%',
-            opacity: 0 
-          }}
-          animate={{ 
-            rotateY: 0,
-            x: 0,
-            opacity: 1 
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 45,
-            damping: 15,
-            mass: 0.5
-          }}
-        >
+            className="w-full max-w-2xl book-page-left flex"
+            initial={direction === 'forward' ? pageAnimationVariants.initialLeft : { opacity: 1 }}
+            animate={pageAnimationVariants.leftPageEnter}
+            exit={direction === 'forward' ? { opacity: 1 } : pageAnimationVariants.leftPageExit}
+            >
           <div className="w-full bg-white rounded-l-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
             {/* Flower Overlays */}
             <div className="absolute inset-0 pointer-events-none">
@@ -215,23 +292,10 @@ const WeddingInvitation = () => {
 
         {/* Right Page Container */}
         <motion.div
-          className="w-full max-w-2xl book-page-right flex"
-          initial={{ 
-            rotateY: -180,
-            x: '-50%',
-            opacity: 0 
-          }}
-          animate={{ 
-            rotateY: 0,
-            x: 0,
-            opacity: 1 
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 45,
-            damping: 15,
-            mass: 0.5
-          }}
+        className="w-full max-w-2xl book-page-right flex"
+        initial={direction === 'backward' ? pageAnimationVariants.initialRight : { opacity: 1 }}
+        animate={pageAnimationVariants.rightPageEnter}
+        exit={direction === 'backward' ? { opacity: 1 } : pageAnimationVariants.rightPageExit}
         >
           <div className="w-full bg-white rounded-r-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
             {/* Flower Overlays */}
@@ -272,15 +336,27 @@ const WeddingInvitation = () => {
 
             {/* Content */}
             <div className="relative z-10">
-              
+              <div className={`text-center space-y-8 mt-32 mb-32 ${cormorant.className}`}>
+                <h2 className="text-[#0A5741] text-3xl font-light">Reservation</h2>
+                
+                <div className="space-y-6">
+                  <p className="text-[#0A5741] text-lg">
+                    We would be honored to have you join us on our special day
+                  </p>
 
-
-
-
-
-
-
-              
+                  <Button
+                    className="rounded-full shadow-lg 
+                      bg-[#0A5741] text-white
+                      font-semibold whitespace-nowrap
+                      transform transition-all duration-300 ease-in-out
+                      hover:shadow-xl hover:bg-[#0B6B4F]
+                      text-base px-8 py-3"
+                    onClick={() => router.push("/reservation")}
+                  >
+                    Make a Reservation
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -354,50 +430,21 @@ const WeddingInvitation = () => {
                 <h2 className="text-[#0A5741] text-3xl font-light mb-12">When</h2>
                 
                 {/* Calendar Section */}
-                <div className="mb-12 p-4 bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-gray-200">
-                  <div className="calendar-container bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <div className="calendar-header bg-[#0A5741] text-white p-2 flex justify-between items-center">
-                      <span className="text-xl font-semibold tracking-wide">October 2025</span>
-                    </div>
-                    <div className="calendar-body p-2">
-                      <div className="grid grid-cols-7 text-center text-xs font-medium text-gray-500 mb-2">
-                        <div>SUN</div>
-                        <div>MON</div>
-                        <div>TUE</div>
-                        <div>WED</div>
-                        <div>THU</div>
-                        <div>FRI</div>
-                        <div>SAT</div>
-                      </div>
-                      <div className="grid grid-cols-7 text-center gap-1">
-                        {[...Array(31)].map((_, index) => {
-                          const day = index + 1;
-                          return (
-                            <div 
-                              key={day} 
-                              className={`p-2 rounded-lg ${
-                                day === 25 
-                                  ? 'bg-[#0A5741] text-white font-bold' 
-                                  : 'text-gray-700 hover:bg-gray-100'
-                              }`}
-                            >
-                              {day}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
+                <div className="mb-12 p-6 bg-white/80 backdrop-blur rounded-xl shadow-md">
+                  <div className="flex items-center justify-center gap-4 mb-4">
+                    <Calendar className="w-6 h-6 text-[#0A5741]" />
+                    <h3 className="text-[#0A5741] text-xl font-medium">Date & Time</h3>
                   </div>
-                  
-                  <div className="event-details mt-5 bg-[#F1F3F4] rounded-lg p-4 border border-gray-200 text-center">
-                    <div className="flex flex-col items-center">
-                      <div>
-                        <p className="text-[#0A5741] text-xl font-semibold tracking-wide">Our Wedding Day</p>
-                        <p className="text-gray-600 text-base">Friday, October 25, 2025 at 2:00 PM</p>
-                        <p className="text-gray-500 text-sm mt-1">Goshen Hotel and Resort, Bamban, Tarlac</p>
-                      </div>
-                    </div>
+                  <div className="space-y-2">
+                    <p className="text-[#0A5741] text-lg">Friday, October 25, 2025</p>
+                    <p className="text-[#0A5741] text-lg">2:00 PM</p>
                   </div>
+                </div>
+
+                <div className="text-[#0A5741] text-lg space-y-4">
+                  <p>Join us for this momentous occasion</p>
+                  <p>as we celebrate our love and commitment</p>
+                  <p>in the presence of family and friends.</p>
                 </div>
               </div>
             </div>
@@ -484,25 +531,15 @@ const WeddingInvitation = () => {
                     <p className="text-[#0A5741] text-lg">Goshen Hotel and Resort</p>
                     <p className="text-[#0A5741] text-lg">Bamban, Tarlac, Philippines</p>
                     <a 
-                      // href="https://maps.google.com/?q=Goshen+Resort+Bamban+Tarlac"
+                      href="https://maps.google.com/?q=Goshen+Resort+Bamban+Tarlac"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-block mt-4 px-6 py-2 bg-[#0A5741] text-white rounded-full hover:bg-[#0B6B4F] transition-colors"
-                      onClick={() => setCurrentPage('location')}
                     >
-                      View Venue
+                      View on Google Maps
                     </a>
                   </div>
                 </div>
-
-
-                <div className="text-[#0A5741] text-lg space-y-4">
-                  <p>Join us for this momentous occasion</p>
-                  <p>as we celebrate our love and commitment</p>
-                  <p>in the presence of family and friends.</p>
-                </div>
-
-
               </div>
             </div>
           </div>
@@ -709,172 +746,6 @@ const WeddingInvitation = () => {
     </div>
   );
 
-  const ReservePage = (): JSX.Element => (
-    <div className="relative w-full perspective-[2000px]">
-      <div className="relative book-pages-container flex md:flex-row flex-col justify-center items-stretch min-h-[750px] md:min-h-[850px] gap-4 md:gap-0">
-        {/* Left Page - Venue Details */}
-        <motion.div
-          className="w-full max-w-2xl book-page-left flex"
-          initial={{ 
-            rotateY: 90,
-            x: '50%',
-            opacity: 0 
-          }}
-          animate={{ 
-            rotateY: 0,
-            x: 0,
-            opacity: 1 
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 45,
-            damping: 15,
-            mass: 0.5
-          }}
-        >
-          <div className="w-full bg-white rounded-l-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
-            {/* Flower Overlays */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  top: 'var(--sidepage-flower-header-offset)',
-                  transform: 'translateY(-80px)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  bottom: 'var(--sidepage-flower-footer-offset)',
-                  transform: 'translateY(80px) rotate(180deg)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10">
-            <div className={`text-center space-y-8 mt-32 mb-32 ${cormorant.className}`}>
-                <h2 className="text-[#0A5741] text-3xl font-light">Reservation</h2>
-                <div className="space-y-6">
-                  <p className="text-[#0A5741] text-lg">
-                    We would be honored to have you join us on our special day
-                  </p>
-
-                  <Button
-                    className="rounded-full shadow-lg 
-                      bg-[#0A5741] text-white
-                      font-semibold whitespace-nowrap
-                      transform transition-all duration-300 ease-in-out
-                      hover:shadow-xl hover:bg-[#0B6B4F]
-                      text-base px-8 py-3"
-                    onClick={() => router.push("/reservation")}
-                  >
-                    Make a Reservation
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Book Spine */}
-        <motion.div 
-          className="book-spine hidden md:block w-1 bg-gradient-to-r from-gray-300 to-gray-200 shadow-inner self-stretch"
-          initial={{ scaleY: 0, opacity: 0 }}
-          animate={{ scaleY: 1, opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.3 }}
-        />
-
-        {/* Right Page - Map */}
-        <motion.div
-          className="w-full max-w-2xl book-page-right flex"
-          initial={{ 
-            rotateY: -90,
-            x: '-50%',
-            opacity: 0 
-          }}
-          animate={{ 
-            rotateY: 0,
-            x: 0,
-            opacity: 1 
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 45,
-            damping: 15,
-            mass: 0.5
-          }}
-        >
-          <div className="w-full bg-white rounded-r-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
-            {/* Flower Overlays */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  top: 'var(--sidepage-flower-header-offset)',
-                  transform: 'translateY(-80px)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  bottom: 'var(--sidepage-flower-footer-offset)',
-                  transform: 'translateY(80px) rotate(180deg)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10">
-              
-
-
-
-
-
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
-
   return (
     <div className={`min-h-screen bg-gradient-to-b from-purple-50 to-white p-4 flex items-center justify-center ${inter.className}`}>
       <style jsx global>{`
@@ -901,10 +772,10 @@ const WeddingInvitation = () => {
         }
         @media (min-width: 769px) {
           :root {
-            --flower-header-offset: -380px;
-            --flower-footer-offset: -400px;
-            --sidepage-flower-header-offset: -320px;
-            --sidepage-flower-footer-offset: -330px;
+            --flower-header-offset: -310px;
+            --flower-footer-offset: -350px;
+            --sidepage-flower-header-offset: -250px;
+            --sidepage-flower-footer-offset: -260px;
           }
         }
         .card-container {
@@ -980,12 +851,11 @@ const WeddingInvitation = () => {
   
           {/* Navigation */}
           {showSidePages && (
-            <>
+            <div className="flex justify-between items-center w-full max-w-4xl mx-auto mb-4">
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.7 }}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 z-50"
               >
                 <Button
                   variant="ghost"
@@ -995,12 +865,46 @@ const WeddingInvitation = () => {
                   <ChevronLeft className="w-6 h-6" />
                 </Button>
               </motion.div>
-
+  
+              <motion.div 
+                className="flex justify-center items-center gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7 }}
+              >
+                <Button
+                  variant="ghost"
+                  className={`rounded-full px-6 py-2 transition-colors ${
+                    currentPage === 'main' ? 'bg-[#0A5741] text-white' : 'text-[#0A5741] hover:bg-[#0A5741] hover:text-white'
+                  }`}
+                  onClick={() => setCurrentPage('main')}
+                >
+                  Details
+                </Button>
+                <Button
+                  variant="ghost"
+                  className={`rounded-full px-6 py-2 transition-colors ${
+                    currentPage === 'calendar' ? 'bg-[#0A5741] text-white' : 'text-[#0A5741] hover:bg-[#0A5741] hover:text-white'
+                  }`}
+                  onClick={() => setCurrentPage('calendar')}
+                >
+                  Calendar
+                </Button>
+                <Button
+                  variant="ghost"
+                  className={`rounded-full px-6 py-2 transition-colors ${
+                    currentPage === 'location' ? 'bg-[#0A5741] text-white' : 'text-[#0A5741] hover:bg-[#0A5741] hover:text-white'
+                  }`}
+                  onClick={() => setCurrentPage('location')}
+                >
+                  Location
+                </Button>
+              </motion.div>
+  
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.7 }}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 z-50"
               >
                 <Button
                   variant="ghost"
@@ -1010,7 +914,7 @@ const WeddingInvitation = () => {
                   <ChevronRight className="w-6 h-6" />
                 </Button>
               </motion.div>
-            </>
+            </div>
           )}
   
           <AnimatePresence mode="wait">
@@ -1126,16 +1030,114 @@ const WeddingInvitation = () => {
             )}
   
             {/* Side Pages */}
-            {showSidePages && (
-              <div className="relative w-full perspective-[2000px]">
-                <AnimatePresence mode="wait">
-                  {currentPage === 'main' && renderMainPages()}
-                  {currentPage === 'calendar' && renderCalendarPage()}
-                  {currentPage === 'location' && <LocationPage />}
-                  {currentPage === 'reserve' && <ReservePage />}
-                </AnimatePresence>
-              </div>
-            )}
+{showSidePages && (
+  <div className="relative w-full perspective-[2000px]">
+    <AnimatePresence mode="wait">
+      {currentPage === 'main' && (
+        <motion.div
+          key="main-page"
+          initial={{ 
+            rotateY: 180,
+            x: '50%',
+            opacity: 0 
+          }}
+          animate={{ 
+            rotateY: 0,
+            x: 0,
+            opacity: 1 
+          }}
+          exit={{ 
+            rotateY: -90,
+            x: '-50%',
+            opacity: 0,
+            transition: {
+              type: "spring",
+              stiffness: 45,
+              damping: 15,
+              mass: 0.5,
+            }
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 45,
+            damping: 15,
+            mass: 0.5
+          }}
+        >
+          {renderMainPages()}
+        </motion.div>
+      )}
+      {currentPage === 'calendar' && (
+        <motion.div
+          key="calendar-page"
+          initial={{ 
+            rotateY: 90,
+            x: '50%',
+            opacity: 0 
+          }}
+          animate={{ 
+            rotateY: 0,
+            x: 0,
+            opacity: 1 
+          }}
+          exit={{ 
+            rotateY: -90,
+            x: '-50%',
+            opacity: 0,
+            transition: {
+              type: "spring",
+              stiffness: 45,
+              damping: 15,
+              mass: 0.5,
+            }
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 45,
+            damping: 15,
+            mass: 0.5
+          }}
+        >
+          {renderCalendarPage()}
+        </motion.div>
+      )}
+      {currentPage === 'location' && (
+        <motion.div
+          key="location-page"
+          initial={{ 
+            rotateY: -180,
+            x: '-50%',
+            opacity: 0 
+          }}
+          animate={{ 
+            rotateY: 0,
+            x: 0,
+            opacity: 1 
+          }}
+          exit={{ 
+            rotateY: -90,
+            x: '-50%',
+            opacity: 0,
+            transition: {
+              type: "spring",
+              stiffness: 45,
+              damping: 15,
+              mass: 0.5,
+            }
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 45,
+            damping: 15,
+            mass: 0.5
+          }}
+        >
+          <LocationPage />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+)}
           </AnimatePresence>
         </div>
       </div>
