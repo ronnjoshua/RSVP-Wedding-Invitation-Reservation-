@@ -21,7 +21,7 @@ const greatVibes = Great_Vibes({
 // Add navigation helper functions
 type PageType = 'main' | 'calendar' | 'location' | 'reserve';
 
-const getNextPage = (currentPage: PageType): PageType => {
+const getNextPage = (currentPage: PageType): PageType | 'front' => {
   switch (currentPage) {
     case 'main':
       return 'calendar';
@@ -30,14 +30,15 @@ const getNextPage = (currentPage: PageType): PageType => {
     case 'location':
       return 'reserve';
     case 'reserve':
-      return 'main';
+      return 'front'; // Return to front card instead of main
   }
 };
 
-const getPreviousPage = (currentPage: PageType): PageType => {
+
+const getPreviousPage = (currentPage: PageType): PageType | 'front' => {
   switch (currentPage) {
     case 'main':
-      return 'reserve';
+      return 'front'; // Return to front card
     case 'reserve':
       return 'location';
     case 'location':
@@ -53,6 +54,20 @@ const WeddingInvitation = () => {
   const [showSidePages, setShowSidePages] = useState(false);
   const [currentPage, setCurrentPage] = useState<PageType>('main');
   const router = useRouter();
+
+  const handleNavigation = (direction: 'next' | 'previous') => {
+    const nextPage = direction === 'next' 
+      ? getNextPage(currentPage)
+      : getPreviousPage(currentPage);
+  
+    if (nextPage === 'front') {
+      // Handle return to front card
+      handleBack();
+    } else {
+      setCurrentPage(nextPage as PageType);
+    }
+  };
+  
 
   const handleReservationClick = () => {
     setIsPressed(true);
@@ -772,23 +787,13 @@ const WeddingInvitation = () => {
             {/* Content */}
             <div className="relative z-10">
             <div className={`text-center space-y-8 mt-32 mb-32 ${cormorant.className}`}>
-                <h2 className="text-[#0A5741] text-3xl font-light">Reservation</h2>
+                <h2 className="text-[#0A5741] text-3xl font-light"></h2>
                 <div className="space-y-6">
                   <p className="text-[#0A5741] text-lg">
-                    We would be honored to have you join us on our special day
+                   
                   </p>
 
-                  <Button
-                    className="rounded-full shadow-lg 
-                      bg-[#0A5741] text-white
-                      font-semibold whitespace-nowrap
-                      transform transition-all duration-300 ease-in-out
-                      hover:shadow-xl hover:bg-[#0B6B4F]
-                      text-base px-8 py-3"
-                    onClick={() => router.push("/reservation")}
-                  >
-                    Make a Reservation
-                  </Button>
+               
                 </div>
               </div>
             </div>
@@ -862,12 +867,26 @@ const WeddingInvitation = () => {
 
             {/* Content */}
             <div className="relative z-10">
-              
+            <div className={`text-center space-y-8 mt-32 mb-32 ${cormorant.className}`}>
+                <h2 className="text-[#0A5741] text-3xl font-light">Reservation</h2>
+                <div className="space-y-6">
+                  <p className="text-[#0A5741] text-lg">
+                    We would be honored to have you join us on our special day
+                  </p>
 
-
-
-
-
+                  <Button
+                    className="rounded-full shadow-lg 
+                      bg-[#0A5741] text-white
+                      font-semibold whitespace-nowrap
+                      transform transition-all duration-300 ease-in-out
+                      hover:shadow-xl hover:bg-[#0B6B4F]
+                      text-base px-8 py-3"
+                    onClick={() => router.push("/reservation")}
+                  >
+                    Make a Reservation
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -968,48 +987,65 @@ const WeddingInvitation = () => {
             transition={{ delay: 0.5 }}
             className="absolute top-4 left-4 z-50"
           >
-            <Button
-              variant="ghost"
-              className="rounded-full p-3 hover:bg-[#0A5741] hover:text-white transition-colors"
-              onClick={handleBack}
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </Button>
             </motion.div>
           )}
   
           {/* Navigation */}
           {showSidePages && (
             <>
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 z-50"
-              >
-                <Button
-                  variant="ghost"
-                  className="rounded-full p-3 hover:bg-[#0A5741] hover:text-white transition-colors"
-                  onClick={() => setCurrentPage(getPreviousPage(currentPage))}
+              {/* Show back button that returns to front card only on details page */}
+              {currentPage === 'main' && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 z-50 flex items-center h-full"
                 >
-                  <ChevronLeft className="w-6 h-6" />
-                </Button>
-              </motion.div>
+                  <Button
+                    variant="ghost"
+                    className="rounded-full p-3 hover:bg-[#0A5741] hover:text-white transition-colors"
+                    onClick={handleBack}
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </Button>
+                </motion.div>
+              )}
 
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 z-50"
-              >
-                <Button
-                  variant="ghost"
-                  className="rounded-full p-3 hover:bg-[#0A5741] hover:text-white transition-colors"
-                  onClick={() => setCurrentPage(getNextPage(currentPage))}
+              {/* Show regular navigation back button for other pages except main */}
+              {currentPage !== 'main' &&  (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 z-50 flex items-center h-full"
                 >
-                  <ChevronRight className="w-6 h-6" />
-                </Button>
-              </motion.div>
+                  <Button
+                    variant="ghost"
+                    className="rounded-full p-3 hover:bg-[#0A5741] hover:text-white transition-colors"
+                    onClick={() => handleNavigation('previous')}
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </Button>
+                </motion.div>
+              )}
+
+              {/* Only show next button if not on reserve page */}
+              {currentPage !== 'reserve' && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 z-50 flex items-center h-full"
+                >
+                  <Button
+                    variant="ghost"
+                    className="rounded-full p-3 hover:bg-[#0A5741] hover:text-white transition-colors"
+                    onClick={() => handleNavigation('next')}
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </Button>
+                </motion.div>
+              )}
             </>
           )}
   
