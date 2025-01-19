@@ -1,8 +1,8 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { Inter, Cormorant_Garamond, Great_Vibes } from 'next/font/google';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Calendar, MapPin } from 'lucide-react';
@@ -53,7 +53,42 @@ const WeddingInvitation = () => {
   const [isPressed, setIsPressed] = useState(false);
   const [showSidePages, setShowSidePages] = useState(false);
   const [currentPage, setCurrentPage] = useState<PageType>('main');
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768); // 768px is standard mobile breakpoint
+    };
+
+    // Check initially
+    checkMobile();
+
+    // Add listener for window resize
+    window.addEventListener('resize', checkMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    // Only handle swipes if on mobile
+    if (!isMobile) return;
+    
+    const SWIPE_THRESHOLD = 50;
+    
+    if (Math.abs(info.offset.x) < SWIPE_THRESHOLD) return;
+    
+    if (info.offset.x > SWIPE_THRESHOLD) {
+      if (currentPage !== 'main') {
+        handleNavigation('previous');
+      }
+    } else if (info.offset.x < -SWIPE_THRESHOLD) {
+      if (currentPage !== 'reserve') {
+        handleNavigation('next');
+      }
+    }
+  };
 
   const handleNavigation = (direction: 'next' | 'previous') => {
     const nextPage = direction === 'next' 
@@ -156,6 +191,13 @@ const WeddingInvitation = () => {
             damping: 15,
             mass: 0.5
           }}
+          {...(isMobile ? {
+            drag: "x",
+            dragConstraints: { left: 0, right: 0 },
+            dragElastic: 0.2,
+            onDragEnd: handleDragEnd,
+            dragMomentum: false,
+          } : {})}
         >
           <div className="w-full bg-white rounded-l-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
             {/* Flower Overlays */}
@@ -325,6 +367,13 @@ const WeddingInvitation = () => {
             damping: 15,
             mass: 0.5
           }}
+          {...(isMobile ? {
+            drag: "x",
+            dragConstraints: { left: 0, right: 0 },
+            dragElastic: 0.2,
+            onDragEnd: handleDragEnd,
+            dragMomentum: false,
+          } : {})}
         >
           <div className="w-full bg-white rounded-l-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
             {/* Flower Overlays */}
@@ -548,6 +597,13 @@ const WeddingInvitation = () => {
             damping: 15,
             mass: 0.5
           }}
+          {...(isMobile ? {
+            drag: "x",
+            dragConstraints: { left: 0, right: 0 },
+            dragElastic: 0.2,
+            onDragEnd: handleDragEnd,
+            dragMomentum: false,
+          } : {})}
         >
           <div className="w-full bg-white rounded-l-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
             {/* Flower Overlays */}
@@ -746,6 +802,13 @@ const WeddingInvitation = () => {
             damping: 15,
             mass: 0.5
           }}
+          {...(isMobile ? {
+            drag: "x",
+            dragConstraints: { left: 0, right: 0 },
+            dragElastic: 0.2,
+            onDragEnd: handleDragEnd,
+            dragMomentum: false,
+          } : {})}
         >
           <div className="w-full bg-white rounded-l-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
             {/* Flower Overlays */}
