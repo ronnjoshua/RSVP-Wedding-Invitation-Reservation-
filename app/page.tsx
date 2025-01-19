@@ -17,6 +17,7 @@ const greatVibes = Great_Vibes({
   subsets: ['latin'],
   weight: '400',
 });
+const emptyCells = 3; // Sunday=0, Monday=1, Tuesday=2, Wednesday=3
 
 // Add navigation helper functions
 type PageType = 'main' | 'calendar' | 'location' | 'reserve';
@@ -422,10 +423,10 @@ const WeddingInvitation = () => {
             {/* Content */}
             <div className="relative z-10">
               <div className={`text-center space-y-8 mt-24 mb-24 ${cormorant.className}`}>
-                <h2 className="text-[#0A5741] text-3xl font-light mb-12">When</h2>
+                <h2 className="text-[#0A5741] text-3xl font-light">When</h2>
                 
                 {/* Calendar Section */}
-                <div className="mb-12 p-4 bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-gray-200">
+                <div className="p-4 bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-gray-200">
                   <div className="calendar-container bg-white rounded-lg border border-gray-200 overflow-hidden">
                     <div className="calendar-header bg-[#0A5741] text-white p-2 flex justify-between items-center">
                       <span className="text-xl font-semibold tracking-wide">October 2025</span>
@@ -441,22 +442,28 @@ const WeddingInvitation = () => {
                         <div>SAT</div>
                       </div>
                       <div className="grid grid-cols-7 text-center gap-1">
-                        {[...Array(31)].map((_, index) => {
-                          const day = index + 1;
-                          return (
-                            <div 
-                              key={day} 
-                              className={`p-2 rounded-lg ${
-                                day === 25 
-                                  ? 'bg-[#0A5741] text-white font-bold' 
-                                  : 'text-gray-700 hover:bg-gray-100'
-                              }`}
-                            >
-                              {day}
-                            </div>
-                          );
-                        })}
-                      </div>
+                      {/* Add empty cells before day 1 */}
+                      {[...Array(emptyCells)].map((_, index) => (
+                        <div key={`empty-${index}`} className="p-2" />
+                      ))}
+                      
+                      {/* Add the days 1-31 */}
+                      {[...Array(31)].map((_, index) => {
+                        const day = index + 1;
+                        return (
+                          <div 
+                            key={day} 
+                            className={`p-2 rounded-lg ${
+                              day === 24 
+                                ? 'bg-[#0A5741] text-white font-bold' 
+                                : 'text-gray-700 hover:bg-gray-100'
+                            }`}
+                          >
+                            {day}
+                          </div>
+                        );
+                      })}
+                    </div>
                     </div>
                   </div>
                   
@@ -464,7 +471,7 @@ const WeddingInvitation = () => {
                     <div className="flex flex-col items-center">
                       <div>
                         <p className="text-[#0A5741] text-xl font-semibold tracking-wide">Our Wedding Day</p>
-                        <p className="text-gray-600 text-base">Friday, October 25, 2025 at 2:00 PM</p>
+                        <p className="text-gray-600 text-base">Friday, October 24, 2025 at 2:00 PM</p>
                         <p className="text-gray-500 text-sm mt-1">Goshen Hotel and Resort, Bamban, Tarlac</p>
                       </div>
                     </div>
@@ -550,7 +557,7 @@ const WeddingInvitation = () => {
             {/* Content */}
             <div className="relative z-10">
               <div className={`text-center space-y-8 mt-24 mb-24 ${cormorant.className}`}>
-                <h2 className="text-[#0A5741] text-3xl font-light mb-12">Where</h2>
+                <h2 className="text-[#0A5741] text-3xl font-light">Where</h2>
                 
                 {/* Location Section */}
                 <div className="p-6 bg-white/80 backdrop-blur rounded-xl shadow-md">
