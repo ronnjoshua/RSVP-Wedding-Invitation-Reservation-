@@ -289,6 +289,13 @@ const WeddingInvitation = () => {
             damping: 15,
             mass: 0.5
           }}
+          {...(isMobile ? {
+            drag: "x",
+            dragConstraints: { left: 0, right: 0 },
+            dragElastic: 0.2,
+            onDragEnd: handleDragEnd,
+            dragMomentum: false,
+          } : {})}
         >
           <div className="w-full bg-white rounded-r-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
             {/* Flower Overlays */}
@@ -495,6 +502,13 @@ const WeddingInvitation = () => {
             damping: 15,
             mass: 0.5
           }}
+          {...(isMobile ? {
+            drag: "x",
+            dragConstraints: { left: 0, right: 0 },
+            dragElastic: 0.2,
+            onDragEnd: handleDragEnd,
+            dragMomentum: false,
+          } : {})}
         >
           <div className="w-full bg-white rounded-r-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
             {/* Flower Overlays */}
@@ -696,6 +710,13 @@ const WeddingInvitation = () => {
             damping: 15,
             mass: 0.5
           }}
+          {...(isMobile ? {
+            drag: "x",
+            dragConstraints: { left: 0, right: 0 },
+            dragElastic: 0.2,
+            onDragEnd: handleDragEnd,
+            dragMomentum: false,
+          } : {})}
         >
           <div className="w-full bg-white rounded-r-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
             {/* Flower Overlays */}
@@ -890,6 +911,13 @@ const WeddingInvitation = () => {
             damping: 15,
             mass: 0.5
           }}
+          {...(isMobile ? {
+            drag: "x",
+            dragConstraints: { left: 0, right: 0 },
+            dragElastic: 0.2,
+            onDragEnd: handleDragEnd,
+            dragMomentum: false,
+          } : {})}
         >
           <div className="w-full bg-white rounded-r-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
             {/* Flower Overlays */}
