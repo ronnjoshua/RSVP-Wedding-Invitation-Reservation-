@@ -62,11 +62,17 @@ const Reservation = () => {
   }, []);
 
   const handleVerifyControlNumber = async (formData: ReservationFormInputs) => {
+
+    // If the control number is empty, clear the error and return early
+    if (!formData.control_number.trim()) {
+      setError(null);
+      setVerifiedData(null);
+      return;
+    }
+    
     try {
       setLoading(true);
       setError(null);
-      
-      console.log('Verifying control number:', formData.control_number);
       
       const response = await fetch(`/api/reservations?controlNumber=${formData.control_number}`, {
         method: 'GET',
@@ -74,19 +80,19 @@ const Reservation = () => {
           'Content-Type': 'application/json',
         },
       });
-
+  
       const data = await response.json();
-      console.log('API Response:', { status: response.status, data });
-
+  
       if (!response.ok) {
-        throw new Error(data.message || 'Verification failed');
+        // Display the exact error message from the server
+        throw new Error(data.message);
       }
-
+  
       if (data.submitted) {
         setError("This reservation has already been submitted");
         return;
       }
-
+  
       setVerifiedData(data);
       clearErrors("control_number");
       
@@ -94,9 +100,11 @@ const Reservation = () => {
       
     } catch (err) {
       console.error("Error during verification:", err);
-      setError(err instanceof Error ? err.message : "An error occurred while verifying the control number");
+      // Display the actual error message instead of the default one
+      setError(err instanceof Error ? err.message : "An error occurred");
       setVerifiedData(null);
-      setValue("control_number", "", { shouldValidate: true });
+      // Don't clear the control number when it's not found
+      // Remove this line: setValue("control_number", "", { shouldValidate: true });
     } finally {
       setLoading(false);
     }
@@ -137,6 +145,12 @@ const Reservation = () => {
               {...register("control_number")}
               className="mt-1 block w-full"
               disabled={loading}
+              onChange={(e) => {
+                if (!e.target.value.trim()) {
+                  setError(null);
+                  setVerifiedData(null);
+                }
+              }}
             />
             <Button
               type="submit"

@@ -28,7 +28,14 @@ export async function GET(request: NextRequest) {
     
     console.log('Received control number:', controlNumber);
 
-    if (!controlNumber) {
+    // if (!controlNumber) {
+    //   return NextResponse.json(
+    //     { message: "Control number is required" },
+    //     { status: 400 }
+    //   );
+    // }
+    // Only check for empty string or null, not undefined
+    if (controlNumber === "" || controlNumber === null) {
       return NextResponse.json(
         { message: "Control number is required" },
         { status: 400 }
