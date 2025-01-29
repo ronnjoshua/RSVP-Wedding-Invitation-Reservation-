@@ -316,7 +316,7 @@ const WeddingInvitation = () => {
                   className="w-full object-contain"
                   priority
                 />
-              </div>
+              </div>     
               <div 
                 className="absolute w-full overflow-visible mix-blend-multiply"
                 style={{ 
@@ -337,15 +337,49 @@ const WeddingInvitation = () => {
 
             {/* Content */}
             <div className="relative z-10">
-              
-
-
-
-
-
-
-
-              
+              <div className={`text-center mt-32 mb-32 ${cormorant.className}`}>
+                <h2 className="text-[#0A5741] text-3xl font-light mb-12">Suggested Attire Guide</h2>
+                
+                <div className="grid md:grid-cols-2 grid-cols-1 gap-8 max-w-3xl mx-auto">
+                  <div className="space-y-4">
+                    <h3 className="text-[#0A5741] text-xl font-light">For Our Cherished Guests</h3>
+                    <div className="max-w-xs mx-auto">
+                      <Image
+                        width={250}
+                        height={100}
+                        src="/card_design/dress_code/guests.webp"
+                        alt="Guests Dress Code"
+                        className="w-full object-contain shadow-md rounded-lg"
+                        priority
+                      />
+                      <p className="text-[#0A5741] text-sm mt-4 px-4">
+                        Ladies: Long dress or formal attire in sage green, cream, or gold
+                        <br />
+                        Gentlemen: Formal suit or Barong Tagalog
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <h3 className="text-[#0A5741] text-xl font-light">For Our Principal Sponsors</h3>
+                    <div className="max-w-xs mx-auto">
+                      <Image
+                        width={250}
+                        height={100}
+                        src="/card_design/dress_code/guests.webp"
+                        alt="Principal Sponsors Dress Code"
+                        className="w-full object-contain shadow-md rounded-lg"
+                        priority
+                      />
+                      <p className="text-[#0A5741] text-sm mt-4 px-4">
+                        Ninangs: Elegant floor-length gown in sage green or cream
+                        <br />
+                        Ninongs: Classic Barong Tagalog or formal suit in coordinating colors
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>
