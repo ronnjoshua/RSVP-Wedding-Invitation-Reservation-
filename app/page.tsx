@@ -178,7 +178,8 @@ const WeddingInvitation = () => {
           className="w-full max-w-2xl book-page-left flex"
           initial={{ 
             rotateY: 180,
-            x: '50%',
+            // x: '50%',
+            transformOrigin: "right center",
             opacity: 0 
           }}
           animate={{ 
@@ -276,7 +277,8 @@ const WeddingInvitation = () => {
           className="w-full max-w-2xl book-page-right flex"
           initial={{ 
             rotateY: -180,
-            x: '-50%',
+            // x: '-50%',
+            transformOrigin: "left center",
             opacity: 0 
           }}
           animate={{ 
@@ -387,7 +389,7 @@ const WeddingInvitation = () => {
     </div>
   );
 
-  const renderCalendarPage = (): JSX.Element => (
+  const RenderCalendarPage = (): JSX.Element => (
     <div className="relative w-full perspective-[2000px]">
       <div className="relative book-pages-container flex md:flex-row flex-col justify-center items-stretch min-h-[750px] md:min-h-[850px] gap-4 md:gap-0">
         {/* Left Page - Calendar */}
@@ -395,7 +397,8 @@ const WeddingInvitation = () => {
           className="w-full max-w-2xl book-page-left flex"
           initial={{ 
             rotateY: 90,
-            x: '50%',
+            // x: '50%',
+            transformOrigin: "right center",
             opacity: 0 
           }}
           animate={{ 
@@ -529,7 +532,8 @@ const WeddingInvitation = () => {
           className="w-full max-w-2xl book-page-right flex"
           initial={{ 
             rotateY: -90,
-            x: '-50%',
+            // x: '-50%',
+            transformOrigin: "left center",
             opacity: 0 
           }}
           animate={{ 
@@ -638,7 +642,8 @@ const WeddingInvitation = () => {
           className="w-full max-w-2xl book-page-left flex"
           initial={{ 
             rotateY: 90,
-            x: '50%',
+            // x: '50%',
+            transformOrigin: "right center",
             opacity: 0 
           }}
           animate={{ 
@@ -737,7 +742,8 @@ const WeddingInvitation = () => {
           className="w-full max-w-2xl book-page-right flex"
           initial={{ 
             rotateY: -90,
-            x: '-50%',
+            // x: '-50%',
+            transformOrigin: "left center",
             opacity: 0 
           }}
           animate={{ 
@@ -850,7 +856,8 @@ const WeddingInvitation = () => {
           className="w-full max-w-2xl book-page-left flex"
           initial={{ 
             rotateY: 90,
-            x: '50%',
+            // x: '50%',
+            transformOrigin: "right center",
             opacity: 0 
           }}
           animate={{ 
@@ -938,7 +945,8 @@ const WeddingInvitation = () => {
           className="w-full max-w-2xl book-page-right flex"
           initial={{ 
             rotateY: -90,
-            x: '-50%',
+            // x: '-50%',
+            transformOrigin: "left center",
             opacity: 0 
           }}
           animate={{ 
@@ -1298,7 +1306,7 @@ const WeddingInvitation = () => {
               <div className="relative w-full perspective-[2000px]">
                 <AnimatePresence mode="wait">
                   {currentPage === 'main' && renderMainPages()}
-                  {currentPage === 'calendar' && renderCalendarPage()}
+                  {currentPage === 'calendar' && <RenderCalendarPage/>}
                   {currentPage === 'location' && <LocationPage />}
                   {currentPage === 'reserve' && <ReservePage />}
                 </AnimatePresence>
