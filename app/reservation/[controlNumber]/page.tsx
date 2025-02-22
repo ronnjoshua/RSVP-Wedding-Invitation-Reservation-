@@ -280,7 +280,7 @@ const ReservationPage = ({ params }: { params: { controlNumber: string } }) => {
           ))}
         </div>
 
-        {fields.length < 5 && (
+        {verifiedData && fields.length < verifiedData.maxGuests && (
           <Button
             type="button"
             onClick={() =>
