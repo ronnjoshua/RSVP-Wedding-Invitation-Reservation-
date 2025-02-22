@@ -8,7 +8,7 @@ export interface GuestInfo {
 }
 
 export interface ReservationData {
-  name: string;
+  reservation_number: string;
   maxGuests: number;
   guests: number;
   guest_info: GuestInfo[];

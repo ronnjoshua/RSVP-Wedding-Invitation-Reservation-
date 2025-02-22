@@ -14,7 +14,7 @@ interface GuestInfo {
 }
 
 interface ReservationData {
-  name: string;
+  reservation_number: string;
   maxGuests: number;
   guests: number;
   guest_info: GuestInfo[];

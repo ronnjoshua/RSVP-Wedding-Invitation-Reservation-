@@ -11,7 +11,7 @@ const reservationSchema = new mongoose.Schema({
   control_number: {
     type: Map,
     of: new mongoose.Schema({
-      name: { type: String, required: true },
+      reservation_number: { type: String, required: true },
       maxGuests: { type: Number, required: true },
       guests: { type: Number, default: 1 },
       guest_info: { 

@@ -42,7 +42,7 @@ interface GuestInfo {
 }
 
 interface ControlNumberData {
-  name: string;
+  reservation_number: string;
   maxGuests: number;
   guest_info: GuestInfo[];
   guests: number;
@@ -193,7 +193,7 @@ const ReservationPage = ({ params }: { params: { controlNumber: string } }) => {
         <h1 className="text-3xl font-bold text-rose-600">Reservation Form</h1>
         <div>
           <p className="block text-sm font-medium text-gray-700">
-            Name: <span className="font-semibold">{verifiedData?.name || 'Loading...'}</span>
+            Name: <span className="font-semibold">{verifiedData?.reservation_number || 'Loading...'}</span>
           </p>
           <p className="block text-sm font-medium text-gray-700">
             Maximum Number of Guests: <span className="font-semibold">{verifiedData?.maxGuests || 'Loading...'}</span>

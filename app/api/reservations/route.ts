@@ -6,7 +6,7 @@ interface ReservationDocument {
   _id: string;
   control_number: {
     [key: string]: {
-      name: string;
+      reservation_number: string;
       maxGuests: number;
       guests: number;
       guest_info: Array<{
