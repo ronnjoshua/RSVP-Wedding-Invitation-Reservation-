@@ -1119,73 +1119,83 @@ const WeddingInvitation = () => {
       `}</style>
 
       <div className="card-container">
-        {/* Back Button */}
-        {showSidePages && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="absolute top-4 left-4 z-50"
-          >
-            </motion.div>
-          )}
-  
           {/* Navigation */}
           {showSidePages && (
             <>
-              {/* Show back button that returns to front card only on details page */}
-              {currentPage === 'main' && (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.7 }}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 z-50 flex items-center h-full"
+              {/* Mobile Navigation Overlay */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                className="sticky top-4 left-0 right-0 z-[1000] flex justify-between items-center px-4
+                  pointer-events-none md:hidden" // Make container non-blocking
+                style={{ position: 'fixed' }}
+              >
+                {/* Left Button (Back/Previous) */}
+                <Button
+                  variant="ghost"
+                  className="rounded-full p-2 bg-white/90 backdrop-blur-sm shadow-lg
+                    hover:bg-[#0A5741] hover:text-white transition-colors
+                    border-2 border-[#0A5741]/50 pointer-events-auto" // Re-enable pointer events for button
+                  onClick={currentPage === 'main' ? handleBack : () => handleNavigation('previous')}
                 >
-                  <Button
-                    variant="ghost"
-                    className="rounded-full p-3 hover:bg-[#0A5741] hover:text-white transition-colors"
-                    onClick={handleBack}
-                  >
-                    <ChevronLeft className="w-6 h-6" />
-                  </Button>
-                </motion.div>
-              )}
+                  <ChevronLeft className="w-6 h-6" />
+                </Button>
 
-              {/* Show regular navigation back button for other pages except main */}
-              {currentPage !== 'main' &&  (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.7 }}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 z-50 flex items-center h-full"
-                >
+                {/* Right Button (Next) - Only show if not on reserve page */}
+                {currentPage !== 'reserve' && (
                   <Button
                     variant="ghost"
-                    className="rounded-full p-3 hover:bg-[#0A5741] hover:text-white transition-colors"
-                    onClick={() => handleNavigation('previous')}
-                  >
-                    <ChevronLeft className="w-6 h-6" />
-                  </Button>
-                </motion.div>
-              )}
-
-              {/* Only show next button if not on reserve page */}
-              {currentPage !== 'reserve' && (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.7 }}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 z-50 flex items-center h-full"
-                >
-                  <Button
-                    variant="ghost"
-                    className="rounded-full p-3 hover:bg-[#0A5741] hover:text-white transition-colors"
+                    className="rounded-full p-2 bg-white/90 backdrop-blur-sm shadow-lg
+                      hover:bg-[#0A5741] hover:text-white transition-colors
+                      border-2 border-[#0A5741]/50 pointer-events-auto" // Re-enable pointer events for button
                     onClick={() => handleNavigation('next')}
                   >
                     <ChevronRight className="w-6 h-6" />
                   </Button>
+                )}
+              </motion.div>
+
+              {/* Desktop Navigation */}
+              <>
+                {/* Left Button */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                  className="hidden md:block absolute left-4 top-1/2 transform -translate-y-1/2 z-50"
+                >
+                  <Button
+                    variant="ghost"
+                    className="rounded-full p-2 bg-white/90 backdrop-blur-sm shadow-lg
+                      hover:bg-[#0A5741] hover:text-white transition-colors
+                      border-2 border-[#0A5741]/50 pointer-events-auto"
+                    onClick={currentPage === 'main' ? handleBack : () => handleNavigation('previous')}
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </Button>
                 </motion.div>
-              )}
+
+                {/* Right Button */}
+                {currentPage !== 'reserve' && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.7 }}
+                    className="hidden md:block absolute right-4 top-1/2 transform -translate-y-1/2 z-50"
+                  >
+                    <Button
+                      variant="ghost"
+                      className="rounded-full p-2 bg-white/90 backdrop-blur-sm shadow-lg
+                      hover:bg-[#0A5741] hover:text-white transition-colors
+                      border-2 border-[#0A5741]/50 pointer-events-auto"
+                      onClick={() => handleNavigation('next')}
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </Button>
+                  </motion.div>
+                )}
+              </>
             </>
           )}
   
