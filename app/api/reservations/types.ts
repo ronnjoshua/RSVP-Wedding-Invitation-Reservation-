@@ -25,7 +25,7 @@ export interface ReservationType {
 
 const guestInfoSchema = new mongoose.Schema({
   full_name: { type: String, required: true },
-  email: { type: String, required: true },
+  email: { type: String, required: false },
   address: { type: String, required: true },
 });
 
