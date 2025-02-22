@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const guestInfoSchema = new mongoose.Schema({
   full_name: { type: String, required: true },
-  email: { type: String, required: true, match: /.+\@.+\..+/ },
+  email: { type: String, required: false, match: /.+\@.+\..+/ },
   address: { type: String, required: true },
   // Add other fields if needed
 });

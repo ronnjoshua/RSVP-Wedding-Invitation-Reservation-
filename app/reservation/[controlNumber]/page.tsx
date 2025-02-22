@@ -23,8 +23,8 @@ const guestSchema = z.object({
     .refine((value) => value >= 1, {
       message: "Age must be a positive number",
     }),
-  email: z.string().email("Invalid email address"),
-  address: z.string().nonempty("Address is required"),
+  email: z.string(),
+  address: z.string(),
 });
 
 const schema = z.object({
