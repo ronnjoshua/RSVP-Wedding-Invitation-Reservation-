@@ -23,6 +23,9 @@ const guestSchema = z.object({
     .transform((value) => Number(value))
     .refine((value) => value >= 1, {
       message: "Age must be a positive number",
+    })
+    .refine((value) => value > 7, {
+      message: "Age must be greater than 7",
     }),
   email: z.string(),
   address: z.string(),
