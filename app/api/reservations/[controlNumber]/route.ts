@@ -4,9 +4,6 @@ import connectToDatabase from "@/lib/mongodb";
 import { Reservation, ReservationType } from "../types";
 import { Resend } from 'resend';
 
-// Added Resend initialization
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 
 export interface GuestInfo {
   full_name: string;
@@ -86,6 +83,9 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { controlNumber: string } }
 ) {
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  
   let connection;
   try {
     const controlNumber = params.controlNumber;
