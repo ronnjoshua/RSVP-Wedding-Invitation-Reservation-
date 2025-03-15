@@ -2,6 +2,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import { Reservation, ReservationType } from "../types";
+import { Resend } from 'resend';
+
+// Added Resend initialization
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+
+export interface GuestInfo {
+  full_name: string;
+  age: number;
+  email?: string;
+  address?: string;
+}
 
 export async function GET(
   request: NextRequest,
@@ -146,6 +158,103 @@ export async function PATCH(
           { message: "Failed to update reservation" },
           { status: 500 }
         );
+      }
+
+      // After successful database update, send confirmation emails
+      try {
+        // Format all guests data for email use
+        const allGuestsFormatted = data.guest_info.map((guest: { full_name: any; age: any; email: any; address: any; }, index: number) => ({
+          number: index + 1,
+          fullName: guest.full_name,
+          age: guest.age,
+          email: guest.email || 'Not provided',
+          address: guest.address || 'Not provided'
+        }));
+
+        // Create guest list HTML table
+        const guestListHTML = allGuestsFormatted.map((guest: { number: any; fullName: any; age: any; email: any; address: any; }) => `
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">${guest.number}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${guest.fullName}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${guest.age}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${guest.email}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${guest.address}</td>
+          </tr>
+        `).join('');
+
+        // Create the HTML email content
+        const emailHTML = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #0A5741; text-align: center;">Reservation Confirmation</h1>
+            
+            <div style="background-color: #f7f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+              <h3>Reservation Details</h3>
+              <p><strong>Reservation Number:</strong> ${currentData.reservation_number}</p>
+              <p><strong>Total Guests:</strong> ${data.guest_info.length}</p>
+              <p><strong>Date Submitted:</strong> ${new Date().toLocaleString()}</p>
+            </div>
+            
+            <h3>Guest Information:</h3>
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+              <tr>
+                <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2; text-align: left;">Guest #</th>
+                <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2; text-align: left;">Name</th>
+                <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2; text-align: left;">Age</th>
+                <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2; text-align: left;">Email</th>
+                <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2; text-align: left;">Address</th>
+              </tr>
+              ${guestListHTML}
+            </table>
+            
+            <p>Thank you for your reservation. If you need to make any changes, please contact us.</p>
+            
+            <div style="margin-top: 30px; text-align: center; font-size: 12px; color: #666;">
+              <p>© 2025 Your Event Name. All rights reserved.</p>
+            </div>
+          </div>
+        `;
+
+        // Get your verified email from environment variables
+        const verifiedEmail = process.env.VERIFIED_EMAIL || 'ronnnucup1@gmail.com';
+
+        // 1. Send admin notification to your verified email
+        await resend.emails.send({
+          from: 'Resend <onboarding@resend.dev>',
+          to: verifiedEmail,
+          subject: `Admin Notification: New Reservation ${currentData.reservation_number}`,
+          html: `
+            <div style="padding: 20px; background-color: #f0f8ff; border-radius: 10px; margin-bottom: 20px;">
+              <h2 style="color: #0A5741;">Admin Notification</h2>
+              <p>A new reservation has been submitted.</p>
+            </div>
+            ${emailHTML}
+          `
+        });
+
+        // 2. For each guest with an email, send a forwarded version to your verified email
+        for (const guest of data.guest_info.filter((g: { email: string; }) => g.email && g.email.trim() !== '')) {
+          // Create personalized message showing the intended recipient
+          const personalizedHTML = `
+            <div style="padding: 20px; background-color: #fff8e1; border-radius: 10px; margin-bottom: 20px;">
+              <h2 style="color: #ff6d00;">Forwarded Guest Confirmation</h2>
+              <p><strong>Forwarded To:</strong> ${guest.email}</p>
+              <p><strong>Guest name:</strong> ${guest.full_name}</p>
+            </div>
+            ${emailHTML}
+          `;
+          
+          // Send to your verified email
+          await resend.emails.send({
+            from: 'Resend <onboarding@resend.dev>',
+            to: verifiedEmail,
+            subject: `Guest Confirmation for ${guest.full_name} (${currentData.reservation_number})`,
+            html: personalizedHTML
+          });
+        }
+        
+        console.log("Email notifications sent successfully");
+      } catch (emailError) {
+        console.error("Error sending confirmation emails:", emailError);
       }
 
       return NextResponse.json({
