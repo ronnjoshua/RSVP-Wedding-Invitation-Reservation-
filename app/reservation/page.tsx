@@ -282,7 +282,7 @@ const Reservation = () => {
                         )}
 
                         <div className="text-center text-gray-400 text-xs mt-4">
-                          <p>If you don't have a control number, please contact the couple</p>
+                          <p>If you don&apos;t have a control number, please contact the couple</p>
                         </div>
                       </div>
                     </CardContent>
@@ -345,7 +345,7 @@ const Reservation = () => {
                           </h3>
                           
                           <p className="text-gray-600 mb-6">
-                            We're excited to have you join us on our special day
+                            We&apos;re excited to have you join us on our special day
                           </p>
                           
                           <div className="flex justify-center items-center space-x-2">
