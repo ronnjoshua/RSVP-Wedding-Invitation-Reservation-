@@ -5,6 +5,7 @@ export interface GuestInfo {
   full_name: string;
   email: string;
   address: string;
+  age: number;
 }
 
 export interface ReservationData {
@@ -24,9 +25,24 @@ export interface ReservationType {
 }
 
 const guestInfoSchema = new mongoose.Schema({
-  full_name: { type: String, required: true },
-  email: { type: String, required: false },
-  address: { type: String, required: true },
+  full_name: { 
+    type: String, 
+    required: [true, 'Full name is required'] 
+  },
+  age: { 
+    type: Number, 
+    required: [true, 'Age is required'],
+    min: [7, 'Age must be greater than 7']
+  },
+  email: { 
+    type: String, 
+    required: false,
+    match: [/.+\@.+\..+/, 'Please provide a valid email address'] 
+  },
+  address: { 
+    type: String, 
+    required: false
+  }
 });
 
 const reservationSchema = new mongoose.Schema({

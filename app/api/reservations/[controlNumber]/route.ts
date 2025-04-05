@@ -141,6 +141,11 @@ export async function PATCH(
         );
       }
 
+      // Debugging - log the data before update
+      console.log("Control Number:", controlNumber);
+      console.log("Guest Info to update:", data.guest_info);
+      
+      // Fix the update by ensuring all fields are properly set
       const updateResult = await Reservation.updateOne(
         { [`control_number.${controlNumber}`]: { $exists: true } },
         {
@@ -152,6 +157,9 @@ export async function PATCH(
           }
         }
       );
+      
+      // Log the update result for debugging
+      console.log("Update result:", updateResult);
 
       if (updateResult.modifiedCount === 0) {
         return NextResponse.json(

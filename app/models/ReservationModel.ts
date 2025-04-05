@@ -4,6 +4,7 @@ const guestInfoSchema = new mongoose.Schema({
   full_name: { type: String, required: true },
   email: { type: String, required: false, match: /.+\@.+\..+/ },
   address: { type: String, required: true },
+  age: { type: Number, required: true },
   // Add other fields if needed
 });
 
@@ -18,8 +19,12 @@ const reservationSchema = new mongoose.Schema({
         type: [guestInfoSchema],
         validate: [arrayLimit, 'The guest_info array is empty']
       },
+      submitted: { type: Boolean, default: false },
+      submittedAt: { type: Date }
     }),
   },
+}, {
+  timestamps: true
 });
 
 // Helper function to validate array length

@@ -124,6 +124,8 @@ const ReservationPage = ({ params }: { params: { controlNumber: string } }) => {
   const handleModalConfirm = async () => {
     if (formData) {
       try {
+        console.log("Submitting reservation data:", formData);
+        
         const response = await fetch(`/api/reservations/${params.controlNumber}`, {
           method: "PATCH",
           headers: {
@@ -135,13 +137,16 @@ const ReservationPage = ({ params }: { params: { controlNumber: string } }) => {
         const result = await response.json();
         if (response.ok) {
           console.log("Reservation successful:", result);
-          // Handle success here
+          // Handle success here - redirect to confirmation page
+          router.push("/confirmation");
         } else {
           console.error("Reservation failed:", result);
           // Handle error here
+          alert("Failed to submit reservation: " + (result.message || "Unknown error"));
         }
       } catch (error) {
         console.error("Error submitting reservation:", error);
+        alert("Error submitting reservation. Please try again.");
       }
     }
     setIsModalOpen(false);
