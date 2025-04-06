@@ -1,11 +1,16 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import { useRouter } from "next/navigation";
 import Image from 'next/image';
-import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Inter, Cormorant_Garamond, Great_Vibes } from 'next/font/google';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Calendar, MapPin } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogTrigger } from '../components/ui/dialog';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '../components/ui/carousel';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ChevronLeft, ChevronRight, Calendar, MapPin, Heart, Gift, Music, MoveRight } from 'lucide-react';
+// import EnvelopeAnimation from '@/components/EnvelopeAnimation';
+import {useRouter} from 'next/navigation';
 
 // Font configurations
 const inter = Inter({ subsets: ['latin'] });
@@ -17,95 +22,55 @@ const greatVibes = Great_Vibes({
   subsets: ['latin'],
   weight: '400',
 });
-const emptyCells = 3; // Sunday=0, Monday=1, Tuesday=2, Wednesday=3
 
-// Add navigation helper functions
+// Page type definitions
 type PageType = 'main' | 'calendar' | 'location' | 'reserve';
 
-const getNextPage = (currentPage: PageType): PageType | 'front' => {
-  switch (currentPage) {
-    case 'main':
-      return 'calendar';
-    case 'calendar':
-      return 'location';
-    case 'location':
-      return 'reserve';
-    case 'reserve':
-      return 'front'; // Return to front card instead of main
-  }
-};
-
-
-const getPreviousPage = (currentPage: PageType): PageType | 'front' => {
-  switch (currentPage) {
-    case 'main':
-      return 'front'; // Return to front card
-    case 'reserve':
-      return 'location';
-    case 'location':
-      return 'calendar';
-    case 'calendar':
-      return 'main';
-  }
-};
-
-const WeddingInvitation = () => {
+const EnhancedWeddingInvitation = () => {
   const [isFlipping, setIsFlipping] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
   const [showSidePages, setShowSidePages] = useState(false);
   const [currentPage, setCurrentPage] = useState<PageType>('main');
   const [isMobile, setIsMobile] = useState(false);
-  const router = useRouter();
+  const [activeTab, setActiveTab] = useState("details");
+  // const [showEnvelope, setShowEnvelope] = useState(true);
+   const router = useRouter();
+
+  // useEffect(() => {
+  //   const checkMobile = () => {
+  //     setIsMobile(window.innerWidth <= 768);
+  //   };
+
+  //   // Check initially
+  //   checkMobile();
+  //   window.addEventListener('resize', checkMobile);
+    
+  //   // Auto-play animation after 2 seconds
+  //   const timer = setTimeout(() => {
+  //     setShowEnvelope(false);
+  //   }, 2000);
+
+  //   return () => {
+  //     window.removeEventListener('resize', checkMobile);
+  //     clearTimeout(timer);
+  //   };
+  // }, []);
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768); // 768px is standard mobile breakpoint
+      setIsMobile(window.innerWidth <= 768);
     };
 
     // Check initially
     checkMobile();
-
-    // Add listener for window resize
     window.addEventListener('resize', checkMobile);
 
-    // Cleanup
-    return () => window.removeEventListener('resize', checkMobile);
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
-
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    // Only handle swipes if on mobile
-    if (!isMobile) return;
-    
-    const SWIPE_THRESHOLD = 50;
-    
-    if (Math.abs(info.offset.x) < SWIPE_THRESHOLD) return;
-    
-    if (info.offset.x > SWIPE_THRESHOLD) {
-      if (currentPage !== 'main') {
-        handleNavigation('previous');
-      }
-    } else if (info.offset.x < -SWIPE_THRESHOLD) {
-      if (currentPage !== 'reserve') {
-        handleNavigation('next');
-      }
-    }
-  };
-
-  const handleNavigation = (direction: 'next' | 'previous') => {
-    const nextPage = direction === 'next' 
-      ? getNextPage(currentPage)
-      : getPreviousPage(currentPage);
   
-    if (nextPage === 'front') {
-      // Handle return to front card
-      handleBack();
-    } else {
-      setCurrentPage(nextPage as PageType);
-    }
-  };
-  
-
-  const handleReservationClick = () => {
+  const handleOpenInvitation = () => {
     setIsPressed(true);
     setIsFlipping(true);
     setTimeout(() => {
@@ -114,41 +79,34 @@ const WeddingInvitation = () => {
   };
 
   const handleBack = () => {
-    const timeline = async () => {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      setShowSidePages(false);
-      setIsFlipping(false);
-      setIsPressed(false);
-      setCurrentPage('main');
-    };
+    setShowSidePages(false);
+    setIsFlipping(false);
+    setIsPressed(false);
+    setCurrentPage('main');
+  };
 
-    timeline();
+  // Envelope animation
+  const envelopeVariants = {
+    initial: { scale: 1, opacity: 1 },
+    exit: { 
+      scale: 1.2, 
+      opacity: 0,
+      transition: { 
+        duration: 1,
+        ease: "easeInOut"
+      }
+    }
   };
 
   // Front card variants
   const cardVariants = {
     initial: {
       opacity: 0,
-      rotateY: -90,
-      x: '-50%',
-      transformOrigin: 'left center',
+      scale: 0.8,
     },
     animate: {
-      rotateY: -90,
-      opacity: 0,
-      x: '-50%',
-      transformOrigin: 'left center',
-      transition: {
-        type: "spring",
-        stiffness: 45,
-        damping: 15,
-        mass: 0.5,
-      }
-    },
-    visible: {
-      rotateY: 0,
-      opacity: 1,
-      x: 0,
+      opacity: isFlipping ? 0 : 1,
+      scale: isFlipping ? 0.8 : 1,
       transition: {
         type: "spring",
         stiffness: 45,
@@ -158,882 +116,41 @@ const WeddingInvitation = () => {
     },
     exit: {
       opacity: 0,
-      rotateY: -90,
-      x: '-50%',
-      transformOrigin: 'left center',
+      scale: 0.8,
       transition: {
-        type: "spring",
-        stiffness: 45,
-        damping: 15,
-        mass: 0.5,
+        duration: 0.5,
       }
     }
   };
 
-  const renderMainPages = (): JSX.Element => (
-    <div className="relative w-full perspective-[2000px]">
-      <div className="relative book-pages-container flex md:flex-row flex-col justify-center items-stretch min-h-[750px] md:min-h-[850px] gap-4 md:gap-0">
-        {/* Left Page Container */}
-        <motion.div
-          className="w-full max-w-2xl book-page-left flex"
-          initial={{ 
-            rotateY: 180,
-            // x: '50%',
-            transformOrigin: "right center",
-            opacity: 0 
-          }}
-          animate={{ 
-            rotateY: 0,
-            x: 0,
-            opacity: 1 
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 45,
-            damping: 15,
-            mass: 0.5
-          }}
-          {...(isMobile ? {
-            drag: "x",
-            dragConstraints: { left: 0, right: 0 },
-            dragElastic: 0.2,
-            onDragEnd: handleDragEnd,
-            dragMomentum: false,
-          } : {})}
-        >
-          <div className="w-full bg-white rounded-l-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
-            {/* Flower Overlays */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  top: 'var(--sidepage-flower-header-offset)',
-                  transform: 'translateY(-80px)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  bottom: 'var(--sidepage-flower-footer-offset)',
-                  transform: 'translateY(80px) rotate(180deg)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-            </div>
+  const pageTransition = {
+    type: "spring",
+    stiffness: 45,
+    damping: 15,
+  };
 
-            {/* Content */}
-            <div className="relative z-10">
-              <div className={`text-center space-y-8 mt-32 mb-32 ${cormorant.className}`}>
-                <h2 className="text-[#0A5741] text-3xl font-light">Dress Code & Motif</h2>
-                
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-[#0A5741] text-xl font-medium">Colors</h3>
-                    <p className="text-[#0A5741] text-lg">Sage Green • Cream • Gold</p>
-                  </div>
+  // Inner pages animations
+  const contentVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut",
+        staggerChildren: 0.1
+      }
+    }
+  };
 
-                  <div>
-                    <h3 className="text-[#0A5741] text-xl font-medium">Ladies</h3>
-                    <p className="text-[#0A5741] text-lg">Long Dress or Formal Attire</p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-[#0A5741] text-xl font-medium">Gentlemen</h3>
-                    <p className="text-[#0A5741] text-lg">Formal Suit or Barong Tagalog</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Book Spine */}
-        <motion.div 
-          className="book-spine hidden md:block w-1 bg-gradient-to-r from-gray-300 to-gray-200 shadow-inner self-stretch"
-          initial={{ scaleY: 0, opacity: 0 }}
-          animate={{ scaleY: 1, opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.3 }}
-        />
-
-        {/* Right Page Container */}
-        <motion.div
-          className="w-full max-w-2xl book-page-right flex"
-          initial={{ 
-            rotateY: -180,
-            // x: '-50%',
-            transformOrigin: "left center",
-            opacity: 0 
-          }}
-          animate={{ 
-            rotateY: 0,
-            x: 0,
-            opacity: 1 
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 45,
-            damping: 15,
-            mass: 0.5
-          }}
-          {...(isMobile ? {
-            drag: "x",
-            dragConstraints: { left: 0, right: 0 },
-            dragElastic: 0.2,
-            onDragEnd: handleDragEnd,
-            dragMomentum: false,
-          } : {})}
-        >
-          <div className="w-full bg-white rounded-r-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
-            {/* Flower Overlays */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  top: 'var(--sidepage-flower-header-offset)',
-                  transform: 'translateY(-80px)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>     
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  bottom: 'var(--sidepage-flower-footer-offset)',
-                  transform: 'translateY(80px) rotate(180deg)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10">
-              <div className={`text-center mt-32 mb-32 ${cormorant.className}`}>
-                <h2 className="text-[#0A5741] text-3xl font-light mb-12">Suggested Attire Guide</h2>
-                
-                <div className="grid md:grid-cols-2 grid-cols-1 gap-8 max-w-3xl mx-auto">
-                  <div className="space-y-4">
-                    <h3 className="text-[#0A5741] text-xl font-light">For Our Cherished Guests</h3>
-                    <div className="max-w-xs mx-auto">
-                      <Image
-                        width={250}
-                        height={100}
-                        src="/card_design/dress_code/guests.webp"
-                        alt="Guests Dress Code"
-                        className="w-full object-contain shadow-md rounded-lg"
-                        priority
-                      />
-                      <p className="text-[#0A5741] text-sm mt-4 px-4">
-                        Ladies: Long dress or formal attire in sage green, cream, or gold
-                        <br />
-                        Gentlemen: Formal suit or Barong Tagalog
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h3 className="text-[#0A5741] text-xl font-light">For Our Principal Sponsors</h3>
-                    <div className="max-w-xs mx-auto">
-                      <Image
-                        width={250}
-                        height={100}
-                        src="/card_design/dress_code/guests.webp"
-                        alt="Principal Sponsors Dress Code"
-                        className="w-full object-contain shadow-md rounded-lg"
-                        priority
-                      />
-                      <p className="text-[#0A5741] text-sm mt-4 px-4">
-                        Ninangs: Elegant floor-length gown in sage green or cream
-                        <br />
-                        Ninongs: Classic Barong Tagalog or formal suit in coordinating colors
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
-
-  const RenderCalendarPage = (): JSX.Element => (
-    <div className="relative w-full perspective-[2000px]">
-      <div className="relative book-pages-container flex md:flex-row flex-col justify-center items-stretch min-h-[750px] md:min-h-[850px] gap-4 md:gap-0">
-        {/* Left Page - Calendar */}
-        <motion.div
-          className="w-full max-w-2xl book-page-left flex"
-          initial={{ 
-            rotateY: 90,
-            // x: '50%',
-            transformOrigin: "right center",
-            opacity: 0 
-          }}
-          animate={{ 
-            rotateY: 0,
-            x: 0,
-            opacity: 1 
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 45,
-            damping: 15,
-            mass: 0.5
-          }}
-          {...(isMobile ? {
-            drag: "x",
-            dragConstraints: { left: 0, right: 0 },
-            dragElastic: 0.2,
-            onDragEnd: handleDragEnd,
-            dragMomentum: false,
-          } : {})}
-        >
-          <div className="w-full bg-white rounded-l-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
-            {/* Flower Overlays */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  top: 'var(--sidepage-flower-header-offset)',
-                  transform: 'translateY(-80px)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  bottom: 'var(--sidepage-flower-footer-offset)',
-                  transform: 'translateY(80px) rotate(180deg)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10">
-              <div className={`text-center space-y-8 mt-24 mb-24 ${cormorant.className}`}>
-                <h2 className="text-[#0A5741] text-3xl font-light">When</h2>
-                
-                {/* Calendar Section */}
-                <div className="p-4 bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-gray-200">
-                  <div className="calendar-container bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <div className="calendar-header bg-[#0A5741] text-white p-2 flex justify-between items-center">
-                      <span className="text-xl font-semibold tracking-wide">October 2025</span>
-                    </div>
-                    <div className="calendar-body p-2">
-                      <div className="grid grid-cols-7 text-center text-xs font-medium text-gray-500 mb-2">
-                        <div>SUN</div>
-                        <div>MON</div>
-                        <div>TUE</div>
-                        <div>WED</div>
-                        <div>THU</div>
-                        <div>FRI</div>
-                        <div>SAT</div>
-                      </div>
-                      <div className="grid grid-cols-7 text-center gap-1">
-                      {/* Add empty cells before day 1 */}
-                      {[...Array(emptyCells)].map((_, index) => (
-                        <div key={`empty-${index}`} className="p-2" />
-                      ))}
-                      
-                      {/* Add the days 1-31 */}
-                      {[...Array(31)].map((_, index) => {
-                        const day = index + 1;
-                        return (
-                          <div 
-                            key={day} 
-                            className={`p-2 rounded-lg ${
-                              day === 24 
-                                ? 'bg-[#0A5741] text-white font-bold' 
-                                : 'text-gray-700 hover:bg-gray-100'
-                            }`}
-                          >
-                            {day}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    </div>
-                  </div>
-                  
-                  <div className="event-details mt-5 bg-[#F1F3F4] rounded-lg p-4 border border-gray-200 text-center">
-                    <div className="flex flex-col items-center">
-                      <div>
-                        <p className="text-[#0A5741] text-xl font-semibold tracking-wide">Our Wedding Day</p>
-                        <p className="text-gray-600 text-base">Friday, October 24, 2025 at 2:00 PM</p>
-                        <p className="text-gray-500 text-sm mt-1">Goshen Hotel and Resort, Bamban, Tarlac</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Book Spine */}
-        <motion.div 
-          className="book-spine hidden md:block w-1 bg-gradient-to-r from-gray-300 to-gray-200 shadow-inner self-stretch"
-          initial={{ scaleY: 0, opacity: 0 }}
-          animate={{ scaleY: 1, opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.3 }}
-        />
-
-        {/* Right Page - Venue */}
-        <motion.div
-          className="w-full max-w-2xl book-page-right flex"
-          initial={{ 
-            rotateY: -90,
-            // x: '-50%',
-            transformOrigin: "left center",
-            opacity: 0 
-          }}
-          animate={{ 
-            rotateY: 0,
-            x: 0,
-            opacity: 1 
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 45,
-            damping: 15,
-            mass: 0.5
-          }}
-          {...(isMobile ? {
-            drag: "x",
-            dragConstraints: { left: 0, right: 0 },
-            dragElastic: 0.2,
-            onDragEnd: handleDragEnd,
-            dragMomentum: false,
-          } : {})}
-        >
-          <div className="w-full bg-white rounded-r-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
-            {/* Flower Overlays */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  top: 'var(--sidepage-flower-header-offset)',
-                  transform: 'translateY(-80px)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  bottom: 'var(--sidepage-flower-footer-offset)',
-                  transform: 'translateY(80px) rotate(180deg)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10">
-              <div className={`text-center space-y-8 mt-24 mb-24 ${cormorant.className}`}>
-                <h2 className="text-[#0A5741] text-3xl font-light">Where</h2>
-                
-                {/* Location Section */}
-                <div className="p-6 bg-white/80 backdrop-blur rounded-xl shadow-md">
-                  <div className="flex items-center justify-center gap-4 mb-4">
-                    <MapPin className="w-6 h-6 text-[#0A5741]" />
-                    <h3 className="text-[#0A5741] text-xl font-medium">Venue</h3>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-[#0A5741] text-lg">Goshen Hotel and Resort</p>
-                    <p className="text-[#0A5741] text-lg">Bamban, Tarlac, Philippines</p>
-                    <a 
-                      // href="https://maps.google.com/?q=Goshen+Resort+Bamban+Tarlac"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block mt-4 px-6 py-2 bg-[#0A5741] text-white rounded-full hover:bg-[#0B6B4F] transition-colors"
-                      onClick={() => setCurrentPage('location')}
-                    >
-                      View Venue
-                    </a>
-                  </div>
-                </div>
-
-
-                <div className="text-[#0A5741] text-lg space-y-4">
-                  <p>Join us for this momentous occasion</p>
-                  <p>as we celebrate our love and commitment</p>
-                  <p>in the presence of family and friends.</p>
-                </div>
-
-
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
-
-  const LocationPage = (): JSX.Element => (
-    <div className="relative w-full perspective-[2000px]">
-      <div className="relative book-pages-container flex md:flex-row flex-col justify-center items-stretch min-h-[750px] md:min-h-[850px] gap-4 md:gap-0">
-        {/* Left Page - Venue Details */}
-        <motion.div
-          className="w-full max-w-2xl book-page-left flex"
-          initial={{ 
-            rotateY: 90,
-            // x: '50%',
-            transformOrigin: "right center",
-            opacity: 0 
-          }}
-          animate={{ 
-            rotateY: 0,
-            x: 0,
-            opacity: 1 
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 45,
-            damping: 15,
-            mass: 0.5
-          }}
-          {...(isMobile ? {
-            drag: "x",
-            dragConstraints: { left: 0, right: 0 },
-            dragElastic: 0.2,
-            onDragEnd: handleDragEnd,
-            dragMomentum: false,
-          } : {})}
-        >
-          <div className="w-full bg-white rounded-l-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
-            {/* Flower Overlays */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  top: 'var(--sidepage-flower-header-offset)',
-                  transform: 'translateY(-80px)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  bottom: 'var(--sidepage-flower-footer-offset)',
-                  transform: 'translateY(80px) rotate(180deg)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10">
-              <div className={`text-center space-y-8 mt-24 mb-24 ${cormorant.className}`}>
-                <h2 className="text-[#0A5741] text-3xl font-light mb-12">The Venue</h2>
-                
-                <div className="p-6 bg-white/80 backdrop-blur rounded-xl shadow-md">
-                  <div className="flex items-center justify-center gap-4 mb-4">
-                    <MapPin className="w-6 h-6 text-[#0A5741]" />
-                    <h3 className="text-[#0A5741] text-xl font-medium">Goshen Hotel and Resort</h3>
-                  </div>
-                  <div className="space-y-4">
-                    <p className="text-[#0A5741] text-lg">
-                      A beautiful venue nestled in the heart of Bamban, Tarlac
-                    </p>
-                    <p className="text-[#0A5741] text-lg">
-                      Known for its serene atmosphere and elegant amenities
-                    </p>
-                    <p className="text-[#0A5741] text-lg">
-                      Perfect for creating lasting memories on our special day
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Book Spine */}
-        <motion.div 
-          className="book-spine hidden md:block w-1 bg-gradient-to-r from-gray-300 to-gray-200 shadow-inner self-stretch"
-          initial={{ scaleY: 0, opacity: 0 }}
-          animate={{ scaleY: 1, opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.3 }}
-        />
-
-        {/* Right Page - Map */}
-        <motion.div
-          className="w-full max-w-2xl book-page-right flex"
-          initial={{ 
-            rotateY: -90,
-            // x: '-50%',
-            transformOrigin: "left center",
-            opacity: 0 
-          }}
-          animate={{ 
-            rotateY: 0,
-            x: 0,
-            opacity: 1 
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 45,
-            damping: 15,
-            mass: 0.5
-          }}
-          {...(isMobile ? {
-            drag: "x",
-            dragConstraints: { left: 0, right: 0 },
-            dragElastic: 0.2,
-            onDragEnd: handleDragEnd,
-            dragMomentum: false,
-          } : {})}
-        >
-          <div className="w-full bg-white rounded-r-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
-            {/* Flower Overlays */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  top: 'var(--sidepage-flower-header-offset)',
-                  transform: 'translateY(-80px)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  bottom: 'var(--sidepage-flower-footer-offset)',
-                  transform: 'translateY(80px) rotate(180deg)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10">
-              <div className={`text-center space-y-8 mt-24 mb-24 ${cormorant.className}`}>
-                <h2 className="text-[#0A5741] text-3xl font-light mb-12">Location</h2>
-                
-                {/* Location Section */}
-                <div className="p-6 bg-white/80 backdrop-blur rounded-xl shadow-md">
-                  <div className="flex items-center justify-center gap-4 mb-4">
-                    <MapPin className="w-6 h-6 text-[#0A5741]" />
-                    <h3 className="text-[#0A5741] text-xl font-medium">Find Us Here</h3>
-                  </div>
-                  <div className="space-y-4">
-                    <p className="text-[#0A5741] text-lg">
-                      Bamban, Tarlac, Philippines
-                    </p>
-                    <div className="aspect-video w-full rounded-lg overflow-hidden shadow-lg">
-                      <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3853.8046719700647!2d120.5508!3d15.4567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTXCsDI3JzI0LjEiTiAxMjDCsDMzJzAyLjkiRQ!5e0!3m2!1sen!2sph!4v1650000000000!5m2!1sen!2sph"
-                        width="100%"
-                        height="100%"
-                        style={{ border: 0 }}
-                        allowFullScreen
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                      />
-                    </div>
-                    <div className="space-y-4 mt-4">
-                      <a 
-                        href="https://maps.google.com/?q=Goshen+Resort+Bamban+Tarlac"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block px-6 py-2 bg-[#0A5741] text-white rounded-full hover:bg-[#0B6B4F] transition-colors"
-                      >
-                        Get Directions
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
-
-  const ReservePage = (): JSX.Element => (
-    <div className="relative w-full perspective-[2000px]">
-      <div className="relative book-pages-container flex md:flex-row flex-col justify-center items-stretch min-h-[750px] md:min-h-[850px] gap-4 md:gap-0">
-        {/* Left Page - Venue Details */}
-        <motion.div
-          className="w-full max-w-2xl book-page-left flex"
-          initial={{ 
-            rotateY: 90,
-            // x: '50%',
-            transformOrigin: "right center",
-            opacity: 0 
-          }}
-          animate={{ 
-            rotateY: 0,
-            x: 0,
-            opacity: 1 
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 45,
-            damping: 15,
-            mass: 0.5
-          }}
-          {...(isMobile ? {
-            drag: "x",
-            dragConstraints: { left: 0, right: 0 },
-            dragElastic: 0.2,
-            onDragEnd: handleDragEnd,
-            dragMomentum: false,
-          } : {})}
-        >
-          <div className="w-full bg-white rounded-l-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
-            {/* Flower Overlays */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  top: 'var(--sidepage-flower-header-offset)',
-                  transform: 'translateY(-80px)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  bottom: 'var(--sidepage-flower-footer-offset)',
-                  transform: 'translateY(80px) rotate(180deg)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10">
-            <div className={`text-center space-y-8 mt-32 mb-32 ${cormorant.className}`}>
-                <h2 className="text-[#0A5741] text-3xl font-light"></h2>
-                <div className="space-y-6">
-                  <p className="text-[#0A5741] text-lg">
-                   
-                  </p>
-
-               
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Book Spine */}
-        <motion.div 
-          className="book-spine hidden md:block w-1 bg-gradient-to-r from-gray-300 to-gray-200 shadow-inner self-stretch"
-          initial={{ scaleY: 0, opacity: 0 }}
-          animate={{ scaleY: 1, opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.3 }}
-        />
-
-        {/* Right Page - Map */}
-        <motion.div
-          className="w-full max-w-2xl book-page-right flex"
-          initial={{ 
-            rotateY: -90,
-            // x: '-50%',
-            transformOrigin: "left center",
-            opacity: 0 
-          }}
-          animate={{ 
-            rotateY: 0,
-            x: 0,
-            opacity: 1 
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 45,
-            damping: 15,
-            mass: 0.5
-          }}
-          {...(isMobile ? {
-            drag: "x",
-            dragConstraints: { left: 0, right: 0 },
-            dragElastic: 0.2,
-            onDragEnd: handleDragEnd,
-            dragMomentum: false,
-          } : {})}
-        >
-          <div className="w-full bg-white rounded-r-3xl shadow-2xl px-8 py-12 relative overflow-hidden flex-1">
-            {/* Flower Overlays */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  top: 'var(--sidepage-flower-header-offset)',
-                  transform: 'translateY(-80px)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-              <div 
-                className="absolute w-full overflow-visible mix-blend-multiply"
-                style={{ 
-                  bottom: 'var(--sidepage-flower-footer-offset)',
-                  transform: 'translateY(80px) rotate(180deg)'
-                }}
-              >
-                <Image
-                  width={800}
-                  height={200}
-                  src="/card_design/top_flower.webp"
-                  alt="Lilac flowers"
-                  className="w-full object-contain"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10">
-            <div className={`text-center space-y-8 mt-32 mb-32 ${cormorant.className}`}>
-                <h2 className="text-[#0A5741] text-3xl font-light">Reservation</h2>
-                <div className="space-y-6">
-                  <p className="text-[#0A5741] text-lg">
-                    We would be honored to have you join us on our special day
-                  </p>
-
-                  <Button
-                    className="rounded-full shadow-lg 
-                      bg-[#0A5741] text-white
-                      font-semibold whitespace-nowrap
-                      transform transition-all duration-300 ease-in-out
-                      hover:shadow-xl hover:bg-[#0B6B4F]
-                      text-base px-8 py-3"
-                    onClick={() => router.push("/reservation")}
-                  >
-                    Make a Reservation
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
-
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5 }
+    }
+  };
   return (
     <div className={`min-h-screen bg-gradient-to-b from-purple-50 to-white p-4 flex items-center justify-center ${inter.className}`}>
       <style jsx global>{`
@@ -1041,177 +158,68 @@ const WeddingInvitation = () => {
           :root {
             --flower-header-offset: -150px;
             --flower-footer-offset: -150px;
-            --sidepage-flower-header-offset: -80px;
-            --sidepage-flower-footer-offset: -80px;
-          }
-          .book-pages-container {
-            flex-direction: column;
-            gap: 1rem;
-          }
-          
-          .book-page-left, .book-page-right {
-            width: 100%;
-            max-width: none;
-          }
-
-          .book-spine {
-            display: none;
           }
         }
         @media (min-width: 769px) {
           :root {
             --flower-header-offset: -380px;
             --flower-footer-offset: -400px;
-            --sidepage-flower-header-offset: -320px;
-            --sidepage-flower-footer-offset: -330px;
           }
         }
         .card-container {
           perspective: 2000px;
-          transform-style: preserve-3d;
           width: 100%;
           max-width: 2xl;
           position: relative;
         }
-        .page-curl {
-          transform-origin: left center;
-          transform-style: preserve-3d;
-          backface-visibility: hidden;
-        }
-        .book-page {
-          transform-style: preserve-3d;
-          backface-visibility: hidden;
-          perspective: 2000px;
-        }
-        .book-page-right {
-          transform-origin: left center;
-          transform-style: preserve-3d;
-          backface-visibility: hidden;
-          perspective: 2000px;
-          box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-        }
-        .perspective-[2000px] {
-          perspective: 2000px;
-        }
-
         .backface-hidden {
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
         }
-
-        .shadow-3d {
-          box-shadow: 
-            0 4px 6px -1px rgba(0, 0, 0, 0.1),
-            0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        .envelope-opening {
+          clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
         }
-
-        .book-page-left {
-          transform-origin: right center;
-          transform-style: preserve-3d;
-          backface-visibility: hidden;
-        }
-
-        .book-page-right {
-          transform-origin: left center;
-          transform-style: preserve-3d;
-          backface-visibility: hidden;
+        .envelope-closing {
+          clip-path: polygon(50% 40%, 100% 0, 100% 100%, 0 100%, 0 0);
         }
       `}</style>
 
-      <div className="card-container">
-          {/* Navigation */}
-          {showSidePages && (
-            <>
-              {/* Mobile Navigation Overlay */}
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
-                className="sticky top-4 left-0 right-0 z-[1000] flex justify-between items-center px-4
-                  pointer-events-none md:hidden" // Make container non-blocking
-                style={{ position: 'fixed' }}
-              >
-                {/* Left Button (Back/Previous) */}
-                <Button
-                  variant="ghost"
-                  className="rounded-full p-2 bg-white/90 backdrop-blur-sm shadow-lg
-                    hover:bg-[#0A5741] hover:text-white transition-colors
-                    border-2 border-[#0A5741]/50 pointer-events-auto" // Re-enable pointer events for button
-                  onClick={currentPage === 'main' ? handleBack : () => handleNavigation('previous')}
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </Button>
+      <div className="card-container relative">
+        <AnimatePresence mode="wait">
+          {/* Envelope Animation */}
+          {/* {showEnvelope && (
+            <motion.div 
+              className="absolute inset-0 z-50 flex items-center justify-center"
+              variants={envelopeVariants}
+              initial="initial"
+              exit="exit"
+            >
+              <div className="relative w-full max-w-2xl aspect-[4/3] bg-gradient-to-br from-[#e8f5e9] to-[#c8e6c9] rounded-lg shadow-2xl overflow-hidden">
+                <div className="absolute inset-0 envelope-closing bg-[#a5d6a7] shadow-inner transform-origin-top"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Heart className="w-24 h-24 text-[#0A5741] opacity-50" />
+                </div>
+              </div>
+            </motion.div>
+          )} */}
+           {/* Enhanced envelope animation */}
+        {/* {showEnvelope && (
+          <EnvelopeAnimation onOpenComplete={() => setShowEnvelope(false)} />
+        )} */}
 
-                {/* Right Button (Next) - Only show if not on reserve page */}
-                {currentPage !== 'reserve' && (
-                  <Button
-                    variant="ghost"
-                    className="rounded-full p-2 bg-white/90 backdrop-blur-sm shadow-lg
-                      hover:bg-[#0A5741] hover:text-white transition-colors
-                      border-2 border-[#0A5741]/50 pointer-events-auto" // Re-enable pointer events for button
-                    onClick={() => handleNavigation('next')}
-                  >
-                    <ChevronRight className="w-6 h-6" />
-                  </Button>
-                )}
-              </motion.div>
-
-              {/* Desktop Navigation */}
-              <>
-                {/* Left Button */}
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.7 }}
-                  className="hidden md:block absolute left-4 top-1/2 transform -translate-y-1/2 z-50"
-                >
-                  <Button
-                    variant="ghost"
-                    className="rounded-full p-2 bg-white/90 backdrop-blur-sm shadow-lg
-                      hover:bg-[#0A5741] hover:text-white transition-colors
-                      border-2 border-[#0A5741]/50 pointer-events-auto"
-                    onClick={currentPage === 'main' ? handleBack : () => handleNavigation('previous')}
-                  >
-                    <ChevronLeft className="w-6 h-6" />
-                  </Button>
-                </motion.div>
-
-                {/* Right Button */}
-                {currentPage !== 'reserve' && (
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.7 }}
-                    className="hidden md:block absolute right-4 top-1/2 transform -translate-y-1/2 z-50"
-                  >
-                    <Button
-                      variant="ghost"
-                      className="rounded-full p-2 bg-white/90 backdrop-blur-sm shadow-lg
-                      hover:bg-[#0A5741] hover:text-white transition-colors
-                      border-2 border-[#0A5741]/50 pointer-events-auto"
-                      onClick={() => handleNavigation('next')}
-                    >
-                      <ChevronRight className="w-6 h-6" />
-                    </Button>
-                  </motion.div>
-                )}
-              </>
-            </>
-          )}
-  
-          <AnimatePresence mode="wait">
-            {/* Front Card */}
-            {!showSidePages && (
-              <motion.div 
-                key="invitation-card"
-                className="page-curl w-full max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl px-8 py-12 relative overflow-hidden"
-                variants={cardVariants}
-                initial="initial"
-                animate={isFlipping ? "animate" : "visible"}
-                exit="exit"
-              >
-                {/* Front card content */}
-                <div className="absolute right-0 w-full overflow-visible">
+          {/* Front Card */}
+          {!showSidePages && (
+            <motion.div 
+              key="invitation-card"
+              className="relative w-full max-w-2xl mx-auto"
+              variants={cardVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <Card className="relative overflow-hidden rounded-3xl shadow-2xl border-0 bg-white">
+                {/* Top Flower Decoration */}
+                <div className="absolute right-0 w-full overflow-visible z-0">
                   <div className="relative w-full -translate-y-16" style={{ top: 'var(--flower-header-offset)' }}>
                     <Image
                       width={800}
@@ -1223,80 +231,99 @@ const WeddingInvitation = () => {
                     />
                   </div>
                 </div>
-  
-                <motion.div 
-                  className="text-center space-y-6 mt-32 mb-32 z-10 relative"
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.3, duration: 0.5 }}
-                >
-                  <h1 className={`text-[#0A5741] text-2xl tracking-wider font-light ${cormorant.className}`}>
-                    SAVE THE DATE
-                  </h1>
-  
-                  <div className="space-y-6">
-                    <p className={`text-[#0A5741] text-6xl ${greatVibes.className}`}>
-                      Ronn
-                    </p>
-  
-                    <p className={`text-[#0A5741] text-2xl font-light ${cormorant.className}`}>
-                      AND
-                    </p>
-  
-                    <p className={`text-[#0A5741] text-6xl ${greatVibes.className}`}>
-                      Leinette
-                    </p>
-                  </div>
-  
-                  <div className="space-y-6">
-                    <p className={`text-[#0A5741] text-lg tracking-wide font-light ${cormorant.className}`}>
-                      TOGETHER WITH THEIR FAMILIES
-                    </p>
-  
-                    <p className={`text-[#0A5741] text-lg tracking-wide font-light ${cormorant.className}`}>
-                      INVITE YOU TO THEIR WEDDING CELEBRATION
-                    </p>
-  
-                    <div className="space-y-2">
-                      <p className={`text-[#0A5741] text-2xl font-light ${cormorant.className}`}>
-                        FRIDAY <span className="text-4xl px-2">24</span> AT 2 PM
-                      </p>
-  
-                      <p className={`text-[#0A5741] text-2xl font-light ${cormorant.className}`}>
-                        OCTOBER 2025
-                      </p>
-                    </div>
-  
-                    <p className={`text-[#0A5741] text-xl font-light ${cormorant.className}`}>
-                      GOSHEN HOTEL AND RESORT BAMBAN,TARLAC
-                    </p>
-                  </div>
-  
+                
+                <div className="px-8 py-12">
                   <motion.div 
-                    className="w-full flex justify-center mt-8"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    className="text-center space-y-8 mt-24 mb-24 z-10 relative"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3, duration: 0.5, staggerChildren: 0.2 }}
                   >
-                    <Button
-                      className={`rounded-full shadow-lg 
-                        bg-[url('/card_design/2.png')] bg-center bg-cover bg-no-repeat
-                        text-[#0A5741]
-                        font-semibold whitespace-nowrap
-                        transform transition-all duration-300 ease-in-out
-                        hover:shadow-xl
-                        text-base px-8 py-3
-                        ${isPressed ? 'scale-95 opacity-80' : ''}
-                        hover:bg-purple-50`}
-                      onClick={handleReservationClick}
+                    <motion.h1 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.3 }}
+                      className={`text-[#0A5741] text-2xl md:text-3xl tracking-wider font-light ${cormorant.className}`}
                     >
-                      <span className="block">
-                        Open Invitation
-                      </span>
-                    </Button>
+                      SAVE THE DATE
+                    </motion.h1>
+                    
+                    <motion.div 
+                      className="space-y-6"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.5 }}
+                    >
+                      <p className={`text-[#0A5741] text-5xl md:text-6xl ${greatVibes.className}`}>
+                        Ronn
+                      </p>
+                      
+                      <p className={`text-[#0A5741] text-2xl font-light ${cormorant.className}`}>
+                        AND
+                      </p>
+                      
+                      <p className={`text-[#0A5741] text-5xl md:text-6xl ${greatVibes.className}`}>
+                        Leinette
+                      </p>
+                    </motion.div>
+                    
+                    <motion.div 
+                      className="space-y-6"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.7 }}
+                    >
+                      <p className={`text-[#0A5741] text-lg tracking-wide font-light ${cormorant.className}`}>
+                        TOGETHER WITH THEIR FAMILIES
+                      </p>
+                      
+                      <p className={`text-[#0A5741] text-lg tracking-wide font-light ${cormorant.className}`}>
+                        INVITE YOU TO THEIR WEDDING CELEBRATION
+                      </p>
+                      
+                      <div className="space-y-2">
+                        <p className={`text-[#0A5741] text-2xl font-light ${cormorant.className}`}>
+                          FRIDAY <span className="text-4xl px-2">24</span> AT 2 PM
+                        </p>
+                        
+                        <p className={`text-[#0A5741] text-2xl font-light ${cormorant.className}`}>
+                          OCTOBER 2025
+                        </p>
+                      </div>
+                      
+                      <p className={`text-[#0A5741] text-xl font-light ${cormorant.className}`}>
+                        GOSHEN HOTEL AND RESORT BAMBAN, TARLAC
+                      </p>
+                    </motion.div>
+                    
+                    <motion.div 
+                      className="w-full flex justify-center mt-8"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.9 }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button
+                        className={`rounded-full shadow-lg 
+                          bg-[#0A5741] text-white
+                          font-semibold whitespace-nowrap
+                          transform transition-all duration-300 ease-in-out
+                          hover:bg-[#0B6B4F]
+                          text-base px-8 py-6
+                          ${isPressed ? 'scale-95 opacity-80' : ''}`}
+                        onClick={handleOpenInvitation}
+                      >
+                        <span className="flex items-center gap-2">
+                        Join Us in Celebration <MoveRight className="h-4 w-4" />
+                        </span>
+                      </Button>
+                    </motion.div>
                   </motion.div>
-                </motion.div>
-  
-                <div className="absolute left-0 bottom-0 w-full overflow-visible">
+                </div>
+                
+                {/* Bottom Flower Decoration */}
+                <div className="absolute left-0 bottom-0 w-full overflow-visible z-0">
                   <div className="relative w-full translate-y-16" style={{ bottom: 'var(--flower-footer-offset)', transform: 'rotate(180deg)' }}>
                     <Image
                       width={800}
@@ -1308,24 +335,476 @@ const WeddingInvitation = () => {
                     />
                   </div>
                 </div>
-              </motion.div>
-            )}
-  
-            {/* Side Pages */}
-            {showSidePages && (
-              <div className="relative w-full perspective-[2000px]">
-                <AnimatePresence mode="wait">
-                  {currentPage === 'main' && renderMainPages()}
-                  {currentPage === 'calendar' && <RenderCalendarPage/>}
-                  {currentPage === 'location' && <LocationPage />}
-                  {currentPage === 'reserve' && <ReservePage />}
-                </AnimatePresence>
-              </div>
-            )}
-          </AnimatePresence>
-        </div>
+              </Card>
+            </motion.div>
+          )}
+          {/* Inner Pages */}
+          {showSidePages && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="w-full max-w-4xl mx-auto"
+            >
+              <Card className="bg-white rounded-3xl shadow-2xl overflow-hidden border-0">
+                <div className="p-6 md:p-8">
+                  <div className="flex justify-between items-center mb-6">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleBack}
+                      className="text-[#0A5741] border-[#0A5741]"
+                    >
+                      <ChevronLeft className="h-4 w-4 mr-1" /> Back
+                    </Button>
+                    <h1 className={`text-2xl md:text-3xl text-[#0A5741] text-center ${greatVibes.className}`}>
+                      Ronn & Leinette
+                    </h1>
+                    <div className="w-20"></div> {/* Spacer for alignment */}
+                  </div>
+                
+                  <Tabs defaultValue="details" className="w-full" value={activeTab} onValueChange={setActiveTab}>
+                    <TabsList className="grid grid-cols-4 mb-8 bg-[#f8f9fa] p-1 rounded-lg">
+                      <TabsTrigger value="details" className="data-[state=active]:bg-[#0A5741] data-[state=active]:text-white">Details</TabsTrigger>
+                      <TabsTrigger value="venue" className="data-[state=active]:bg-[#0A5741] data-[state=active]:text-white">Venue</TabsTrigger>
+                      <TabsTrigger value="attire" className="data-[state=active]:bg-[#0A5741] data-[state=active]:text-white">Attire</TabsTrigger>
+                      <TabsTrigger value="rsvp" className="data-[state=active]:bg-[#0A5741] data-[state=active]:text-white">RSVP</TabsTrigger>
+                    </TabsList>
+                    
+                    <div className="relative overflow-hidden rounded-xl bg-[#f8f9fa]/50 backdrop-blur-sm p-4 min-h-[500px]">
+                      {/* Top Flower Overlay */}
+                      <div className="absolute top-0 right-0 w-full overflow-hidden opacity-10 pointer-events-none">
+                        <Image
+                          width={400}
+                          height={100}
+                          src="/card_design/top_flower.webp"
+                          alt="Decorative flower"
+                          className="w-full object-contain"
+                        />
+                      </div>
+                      
+                      {/* Bottom Flower Overlay */}
+                      <div className="absolute bottom-0 right-0 w-full overflow-hidden opacity-10 pointer-events-none transform rotate-180">
+                        <Image
+                          width={400}
+                          height={100}
+                          src="/card_design/top_flower.webp"
+                          alt="Decorative flower"
+                          className="w-full object-contain"
+                        />
+                      </div>
+                    
+                      <TabsContent value="details" className="relative z-10">
+                        <motion.div
+                          variants={contentVariants}
+                          initial="hidden"
+                          animate="visible"
+                          className="space-y-8"
+                        >
+                          <motion.div variants={itemVariants} className="text-center">
+                            <h2 className={`text-2xl font-medium text-[#0A5741] mb-4 ${cormorant.className}`}>Wedding Details</h2>
+                            <p className={`text-lg text-[#0A5741] ${cormorant.className}`}>
+                              Join us for our special day
+                            </p>
+                          </motion.div>
+                          
+                          <motion.div variants={itemVariants} className="bg-white rounded-xl p-6 shadow-sm">
+                            <div className="flex items-center mb-4">
+                              <Calendar className="h-5 w-5 text-[#0A5741] mr-2" />
+                              <h3 className={`text-xl text-[#0A5741] ${cormorant.className}`}>Date & Time</h3>
+                            </div>
+                            <div className="pl-7">
+                              <p className="text-gray-700 font-medium">Friday, October 24, 2025</p>
+                              <p className="text-gray-700">Ceremony: 2:00 PM</p>
+                              <p className="text-gray-700">Reception: 4:00 PM</p>
+                            </div>
+                          </motion.div>
+
+                          <motion.div variants={itemVariants} className="bg-white rounded-xl p-6 shadow-sm">
+                            <div className="flex flex-col">
+                              <div className="text-center mb-4">
+                                <h3 className={`text-xl text-[#0A5741] font-medium ${cormorant.className}`}>Our Timeline</h3>
+                              </div>
+                              <div className="relative pl-8">
+                                {/* Timeline line */}
+                                <div className="absolute left-3 top-0 h-full w-0.5 bg-[#0A5741]/20"></div>
+                                
+                                {/* Timeline events */}
+                                <div className="relative mb-6">
+                                  <div className="absolute left-[-22px] top-1 h-4 w-4 rounded-full bg-[#0A5741]"></div>
+                                  <p className="font-medium text-[#0A5741]">2:00 PM</p>
+                                  <p className="text-gray-700">Wedding Ceremony</p>
+                                </div>
+                                
+                                <div className="relative mb-6">
+                                  <div className="absolute left-[-22px] top-1 h-4 w-4 rounded-full bg-[#0A5741]"></div>
+                                  <p className="font-medium text-[#0A5741]">3:00 PM</p>
+                                  <p className="text-gray-700">Event Hour</p>
+                                </div>
+                                
+                                <div className="relative mb-6">
+                                  <div className="absolute left-[-22px] top-1 h-4 w-4 rounded-full bg-[#0A5741]"></div>
+                                  <p className="font-medium text-[#0A5741]">4:00 PM</p>
+                                  <p className="text-gray-700">Reception & Dinner</p>
+                                </div>
+                                
+                                <div className="relative">
+                                  <div className="absolute left-[-22px] top-1 h-4 w-4 rounded-full bg-[#0A5741]"></div>
+                                  <p className="font-medium text-[#0A5741]">7:00 PM</p>
+                                  <p className="text-gray-700">Dancing & Celebration</p>
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+
+                          <motion.div variants={itemVariants} className="grid md:grid-cols-3 gap-4">
+                            <div className="bg-white rounded-xl p-4 shadow-sm flex flex-col items-center text-center">
+                              <Gift className="h-6 w-6 text-[#0A5741] mb-2" />
+                              <h3 className={`text-lg text-[#0A5741] ${cormorant.className}`}>Gifts</h3>
+                              <p className="text-sm text-gray-700">Your presence is our present, but if you wish to give a gift, we have a registry available.</p>
+                            </div>
+                            
+                            <div className="bg-white rounded-xl p-4 shadow-sm flex flex-col items-center text-center">
+                              <Music className="h-6 w-6 text-[#0A5741] mb-2" />
+                              <h3 className={`text-lg text-[#0A5741] ${cormorant.className}`}>Music</h3>
+                              <p className="text-sm text-gray-700">Live band and DJ will provide entertainment throughout the evening.</p>
+                            </div>
+                            
+                            <div className="bg-white rounded-xl p-4 shadow-sm flex flex-col items-center text-center">
+                              <Calendar className="h-6 w-6 text-[#0A5741] mb-2" />
+                              <h3 className={`text-lg text-[#0A5741] ${cormorant.className}`}>RSVP By</h3>
+                              <p className="text-sm text-gray-700">Please respond by September 1, 2025</p>
+                            </div>
+                          </motion.div>
+                        </motion.div>
+                      </TabsContent>
+                      
+                      <TabsContent value="venue" className="relative z-10">
+                        <motion.div
+                          variants={contentVariants}
+                          initial="hidden"
+                          animate="visible"
+                          className="space-y-8"
+                        >
+                          <motion.div variants={itemVariants} className="text-center mb-6">
+                            <h2 className={`text-2xl font-medium text-[#0A5741] mb-2 ${cormorant.className}`}>
+                              Goshen Hotel and Resort
+                            </h2>
+                            <p className={`text-lg text-[#0A5741] ${cormorant.className}`}>
+                              Bamban, Tarlac, Philippines
+                            </p>
+                          </motion.div>
+                          
+                          <motion.div variants={itemVariants} className="overflow-hidden rounded-xl shadow-md">
+                            <div className="aspect-video w-full">
+                              <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3853.8046719700647!2d120.5508!3d15.4567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTXCsDI3JzI0LjEiTiAxMjDCsDMzJzAyLjkiRQ!5e0!3m2!1sen!2sph!4v1650000000000!5m2!1sen!2sph"
+                                width="100%"
+                                height="100%"
+                                style={{ border: 0 }}
+                                allowFullScreen
+                                loading="lazy"
+                                referrerPolicy="no-referrer-when-downgrade"
+                              />
+                            </div>
+                          </motion.div>
+                          
+                          <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-6">
+                            <div className="bg-white rounded-xl p-6 shadow-sm">
+                              <h3 className={`text-xl text-[#0A5741] mb-4 ${cormorant.className}`}>About the Venue</h3>
+                              <p className="text-gray-700 mb-3">
+                                Goshen Hotel and Resort offers a serene and picturesque setting for our special day. Nestled in the heart of Bamban, the venue showcases natural beauty and elegant amenities.
+                              </p>
+                              <p className="text-gray-700">
+                                The ceremony will take place in the Grand Garden, followed by a reception in the Pavilion.
+                              </p>
+                            </div>
+                            
+                            <div className="bg-white rounded-xl p-6 shadow-sm">
+                              <h3 className={`text-xl text-[#0A5741] mb-4 ${cormorant.className}`}>Getting There</h3>
+                              <div className="space-y-3">
+                                <div>
+                                  <h4 className="font-medium text-[#0A5741]">By Car</h4>
+                                  <p className="text-gray-700 text-sm">1 hour drive from Manila via NLEX</p>
+                                </div>
+                                
+                                <div>
+                                  <h4 className="font-medium text-[#0A5741]">Shuttle Service</h4>
+                                  <p className="text-gray-700 text-sm">Available from designated pickup points</p>
+                                </div>
+                                
+                                <div>
+                                  <h4 className="font-medium text-[#0A5741]">Parking</h4>
+                                  <p className="text-gray-700 text-sm">Complimentary valet parking available</p>
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+                          
+                          <motion.div variants={itemVariants} className="flex justify-center">
+                            <a 
+                              href="https://maps.google.com/?q=Goshen+Resort+Bamban+Tarlac"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block px-6 py-3 bg-[#0A5741] text-white rounded-lg hover:bg-[#0B6B4F] transition-colors"
+                            >
+                              Get Directions
+                            </a>
+                          </motion.div>
+                        </motion.div>
+                      </TabsContent>
+                      
+                      <TabsContent value="attire" className="relative z-10">
+                        <motion.div
+                          variants={contentVariants}
+                          initial="hidden"
+                          animate="visible"
+                          className="space-y-8"
+                        >
+                          <motion.div variants={itemVariants} className="text-center">
+                            <h2 className={`text-2xl font-medium text-[#0A5741] mb-4 ${cormorant.className}`}>
+                              Dress Code & Color Palette
+                            </h2>
+                            <p className={`text-lg text-[#0A5741] mb-2 ${cormorant.className}`}>
+                              We kindly request our guests to follow the dress code below
+                            </p>
+                          </motion.div>
+                          
+                          <motion.div variants={itemVariants} className="bg-white rounded-xl p-6 shadow-sm">
+                            <div className="flex items-center justify-center mb-6">
+                              <div className="h-8 w-8 rounded-full bg-[#8fbc8f] mr-2"></div>
+                              <div className="h-8 w-8 rounded-full bg-[#f5f5dc] mr-2"></div>
+                              <div className="h-8 w-8 rounded-full bg-[#d4af37] mr-2"></div>
+                              <p className="text-lg text-[#0A5741] font-medium ml-2">Sage Green • Cream • Gold</p>
+                            </div>
+                            
+                            <div className="grid md:grid-cols-2 gap-8">
+                              <div className="space-y-4">
+                                <h3 className={`text-lg text-[#0A5741] font-medium ${cormorant.className}`}>
+                                  Ladies
+                                </h3>
+                                <div className="aspect-[3/4] rounded-lg overflow-hidden shadow-md">
+                                  <div className="w-full h-full bg-[#f0f0f0] flex items-center justify-center">
+                                    <Image
+                                      width={250}
+                                      height={100}
+                                      src="/card_design/dress_code/guests.webp"
+                                      alt="Ladies Dress Code"
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                </div>
+                                <ul className="space-y-2 text-gray-700">
+                                  <li>• Long dress or formal attire</li>
+                                  <li>• Preferably in sage green, cream, or gold</li>
+                                  <li>• Elegant heels or dressy flats</li>
+                                </ul>
+                              </div>
+                              
+                              <div className="space-y-4">
+                                <h3 className={`text-lg text-[#0A5741] font-medium ${cormorant.className}`}>
+                                  Gentlemen
+                                </h3>
+                                <div className="aspect-[3/4] rounded-lg overflow-hidden shadow-md">
+                                  <div className="w-full h-full bg-[#f0f0f0] flex items-center justify-center">
+                                    <Image
+                                      width={250}
+                                      height={100}
+                                      src="/card_design/dress_code/guests.webp"
+                                      alt="Gentlemen Dress Code"
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                </div>
+                                <ul className="space-y-2 text-gray-700">
+                                  <li>• Formal suit or Barong Tagalog</li>
+                                  <li>• Coordinating tie or accessories</li>
+                                  <li>• Dress shoes</li>
+                                </ul>
+                              </div>
+                            </div>
+                          </motion.div>
+                          
+                          <motion.div variants={itemVariants} className="bg-white rounded-xl p-6 shadow-sm">
+                            <h3 className={`text-xl text-[#0A5741] mb-4 text-center ${cormorant.className}`}>
+                              For Principal Sponsors
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-6">
+                              <div>
+                                <h4 className="font-medium text-[#0A5741]">Ninangs</h4>
+                                <p className="text-gray-700 mb-2">Elegant floor-length gown in sage green or cream</p>
+                                <div className="rounded-lg overflow-hidden shadow-sm">
+                                  <Image
+                                    width={250}
+                                    height={100}
+                                    src="/card_design/dress_code/guests.webp"
+                                    alt="Principal Sponsors (Female)"
+                                    className="w-full h-40 object-cover"
+                                  />
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <h4 className="font-medium text-[#0A5741]">Ninongs</h4>
+                                <p className="text-gray-700 mb-2">Classic Barong Tagalog or formal suit</p>
+                                <div className="rounded-lg overflow-hidden shadow-sm">
+                                  <Image
+                                    width={250}
+                                    height={100}
+                                    src="/card_design/dress_code/guests.webp"
+                                    alt="Principal Sponsors (Male)"
+                                    className="w-full h-40 object-cover"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+                        </motion.div>
+                      </TabsContent>
+                      <TabsContent value="rsvp" className="relative z-10">
+                        <motion.div
+                          variants={contentVariants}
+                          initial="hidden"
+                          animate="visible"
+                          className="space-y-8"
+                        >
+                          <motion.div variants={itemVariants} className="text-center">
+                            <h2 className={`text-2xl font-medium text-[#0A5741] mb-4 ${cormorant.className}`}>
+                              Répondez S'il Vous Plaît
+                            </h2>
+                            <p className={`text-lg text-[#0A5741] mb-6 ${cormorant.className}`}>
+                              We would be honored to have you join us on our special day
+                            </p>
+                          </motion.div>
+                          
+                          <motion.div variants={itemVariants} className="bg-white rounded-xl p-8 shadow-sm">
+                            <div className="text-center mb-6">
+                              <h3 className={`text-xl text-[#0A5741] ${cormorant.className}`}>
+                                Please submit your RSVP by September 1, 2025
+                              </h3>
+                            </div>
+                            <div className="space-y-6">
+                            <p className="text-[#0A5741] text-lg">
+                              We would be honored to have you join us on our special day
+                            </p>
+
+                            <Button
+                              className="rounded-full shadow-lg 
+                                bg-[#0A5741] text-white
+                                font-semibold whitespace-nowrap
+                                transform transition-all duration-300 ease-in-out
+                                hover:shadow-xl hover:bg-[#0B6B4F]
+                                text-base px-8 py-3"
+                              onClick={() => router.push("/reservation")}
+                            >
+                              Make a Reservation
+                            </Button>
+                          </div>
+                          </motion.div>
+                          
+                          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <Card className="p-4 border-0 shadow-sm">
+                              <h3 className="font-medium text-[#0A5741] mb-2">RSVP Deadline</h3>
+                              <p className="text-sm text-gray-600">September 1, 2025</p>
+                            </Card>
+                            
+                            <Card className="p-4 border-0 shadow-sm">
+                              <h3 className="font-medium text-[#0A5741] mb-2">Questions?</h3>
+                              <p className="text-sm text-gray-600">Email: ronette@example.com</p>
+                            </Card>
+                            
+                            <Card className="p-4 border-0 shadow-sm">
+                              <h3 className="font-medium text-[#0A5741] mb-2">Plus Ones</h3>
+                              <p className="text-sm text-gray-600">Limited to invitation list only</p>
+                            </Card>
+                          </motion.div>
+                        </motion.div>
+                      </TabsContent>
+                    </div>
+                  </Tabs>
+                </div>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    );
-  };
-  
-  export default WeddingInvitation;
+    </div>
+  );
+};
+
+// We're creating a responsive gallery component with our venue images
+const VenueGallery = () => {
+  return (
+    <Carousel className="w-full max-w-md">
+      <CarouselContent>
+        <CarouselItem>
+          <div className="p-1">
+            <div className="overflow-hidden rounded-xl aspect-video bg-[#f0f0f0]">
+              <Image
+                src="/card_design/venue/venue-1.jpg"
+                alt="Venue Image 1"
+                width={600}
+                height={400}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <p className="text-center text-sm mt-2">Beautiful garden setup</p>
+          </div>
+        </CarouselItem>
+        <CarouselItem>
+          <div className="p-1">
+            <div className="overflow-hidden rounded-xl aspect-video bg-[#f0f0f0]">
+              <Image
+                src="/card_design/venue/venue-2.jpg"
+                alt="Venue Image 2"
+                width={600}
+                height={400}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <p className="text-center text-sm mt-2">Reception hall</p>
+          </div>
+        </CarouselItem>
+        <CarouselItem>
+          <div className="p-1">
+            <div className="overflow-hidden rounded-xl aspect-video bg-[#f0f0f0]">
+              <Image
+                src="/card_design/venue/venue-3.jpg"
+                alt="Venue Image 3"
+                width={600}
+                height={400}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <p className="text-center text-sm mt-2">Ceremony location</p>
+          </div>
+        </CarouselItem>
+      </CarouselContent>
+      <CarouselPrevious className="ml-2" />
+      <CarouselNext className="mr-2" />
+    </Carousel>
+  );
+};
+
+// Color palette display component
+const ColorPalette = () => {
+  return (
+    <div className="flex justify-center gap-4 my-4">
+      <div className="flex flex-col items-center">
+        <div className="h-16 w-16 rounded-full bg-[#8fbc8f] border-2 border-white shadow-md"></div>
+        <p className="text-xs mt-1 text-gray-700">Sage Green</p>
+      </div>
+      <div className="flex flex-col items-center">
+        <div className="h-16 w-16 rounded-full bg-[#f5f5dc] border-2 border-white shadow-md"></div>
+        <p className="text-xs mt-1 text-gray-700">Cream</p>
+      </div>
+      <div className="flex flex-col items-center">
+        <div className="h-16 w-16 rounded-full bg-[#d4af37] border-2 border-white shadow-md"></div>
+        <p className="text-xs mt-1 text-gray-700">Gold</p>
+      </div>
+    </div>
+  );
+};
+
+export default EnhancedWeddingInvitation;
