@@ -671,7 +671,7 @@ const EnhancedWeddingInvitation = () => {
                         >
                           <motion.div variants={itemVariants} className="text-center">
                             <h2 className={`text-2xl font-medium text-[#0A5741] mb-4 ${cormorant.className}`}>
-                              Répondez S'il Vous Plaît
+                              Répondez Sil Vous Plaît
                             </h2>
                             <p className={`text-lg text-[#0A5741] mb-6 ${cormorant.className}`}>
                               We would be honored to have you join us on our special day
