@@ -169,7 +169,7 @@ const EnvelopeAnimation: React.FC<EnvelopeAnimationProps> = ({ onOpenComplete })
                         size={56}
                       />
                       <h2 className={`text-2xl ${colors.text.primary} ${greatVibes.className}`}>
-                        You're Cordially Invited
+                        You&apos;re Cordially Invited
                       </h2>
                       <p className={`text-base ${colors.text.secondary}/80 ${cormorant.className}`}>
                         To Celebrate the Wedding of
