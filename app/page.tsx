@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogTrigger } from '../components/ui/dialog';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '../components/ui/carousel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ChevronLeft, ChevronRight, Calendar, MapPin, Heart, Gift, Music, MoveRight } from 'lucide-react';
+import EnhancedDressCode from '@/components/EnhancedDressCode';
 // import EnvelopeAnimation from '@/components/EnvelopeAnimation';
 import {useRouter} from 'next/navigation';
 
@@ -378,7 +379,7 @@ const EnhancedWeddingInvitation = () => {
                         <Image
                           width={400}
                           height={100}
-                          src="/card_design/top_flower.webp"
+                          src="/flower-bg.png"
                           alt="Decorative flower"
                           className="w-full object-contain"
                         />
@@ -405,7 +406,7 @@ const EnhancedWeddingInvitation = () => {
                           <motion.div variants={itemVariants} className="text-center">
                             <h2 className={`text-2xl font-medium text-[#0A5741] mb-4 ${cormorant.className}`}>Wedding Details</h2>
                             <p className={`text-lg text-[#0A5741] ${cormorant.className}`}>
-                              Join us for our special day
+                              Join us on our special day
                             </p>
                           </motion.div>
                           
@@ -417,7 +418,7 @@ const EnhancedWeddingInvitation = () => {
                             <div className="pl-7">
                               <p className="text-gray-700 font-medium">Friday, October 24, 2025</p>
                               <p className="text-gray-700">Ceremony: 2:00 PM</p>
-                              <p className="text-gray-700">Reception: 4:00 PM</p>
+                              <p className="text-gray-700">Reception: 4:30 PM</p>
                             </div>
                           </motion.div>
 
@@ -433,26 +434,20 @@ const EnhancedWeddingInvitation = () => {
                                 {/* Timeline events */}
                                 <div className="relative mb-6">
                                   <div className="absolute left-[-22px] top-1 h-4 w-4 rounded-full bg-[#0A5741]"></div>
+                                  <p className="font-medium text-[#0A5741]">1:00 PM</p>
+                                  <p className="text-gray-700">Entourage Assembly</p>
+                                </div>
+
+                                <div className="relative mb-6">
+                                  <div className="absolute left-[-22px] top-1 h-4 w-4 rounded-full bg-[#0A5741]"></div>
                                   <p className="font-medium text-[#0A5741]">2:00 PM</p>
                                   <p className="text-gray-700">Wedding Ceremony</p>
                                 </div>
                                 
                                 <div className="relative mb-6">
                                   <div className="absolute left-[-22px] top-1 h-4 w-4 rounded-full bg-[#0A5741]"></div>
-                                  <p className="font-medium text-[#0A5741]">3:00 PM</p>
-                                  <p className="text-gray-700">Event Hour</p>
-                                </div>
-                                
-                                <div className="relative mb-6">
-                                  <div className="absolute left-[-22px] top-1 h-4 w-4 rounded-full bg-[#0A5741]"></div>
-                                  <p className="font-medium text-[#0A5741]">4:00 PM</p>
+                                  <p className="font-medium text-[#0A5741]">4:30 PM</p>
                                   <p className="text-gray-700">Reception & Dinner</p>
-                                </div>
-                                
-                                <div className="relative">
-                                  <div className="absolute left-[-22px] top-1 h-4 w-4 rounded-full bg-[#0A5741]"></div>
-                                  <p className="font-medium text-[#0A5741]">7:00 PM</p>
-                                  <p className="text-gray-700">Dancing & Celebration</p>
                                 </div>
                               </div>
                             </div>
@@ -462,7 +457,10 @@ const EnhancedWeddingInvitation = () => {
                             <div className="bg-white rounded-xl p-4 shadow-sm flex flex-col items-center text-center">
                               <Gift className="h-6 w-6 text-[#0A5741] mb-2" />
                               <h3 className={`text-lg text-[#0A5741] ${cormorant.className}`}>Gifts</h3>
-                              <p className="text-sm text-gray-700">Your presence is our present, but if you wish to give a gift, we have a registry available.</p>
+                              <p className="text-sm text-gray-700">Your presence is the greatest gift.
+                                But if you'd like to honor us with more,
+                                a monetary gift would be deeply appreciated
+                                as we begin our journey together.</p>
                             </div>
                             
                             <div className="bg-white rounded-xl p-4 shadow-sm flex flex-col items-center text-center">
@@ -474,7 +472,7 @@ const EnhancedWeddingInvitation = () => {
                             <div className="bg-white rounded-xl p-4 shadow-sm flex flex-col items-center text-center">
                               <Calendar className="h-6 w-6 text-[#0A5741] mb-2" />
                               <h3 className={`text-lg text-[#0A5741] ${cormorant.className}`}>RSVP By</h3>
-                              <p className="text-sm text-gray-700">Please respond by September 1, 2025</p>
+                              <p className="text-sm text-gray-700">Please respond on or before September 1, 2025</p>
                             </div>
                           </motion.div>
                         </motion.div>
@@ -499,7 +497,7 @@ const EnhancedWeddingInvitation = () => {
                           <motion.div variants={itemVariants} className="overflow-hidden rounded-xl shadow-md">
                             <div className="aspect-video w-full">
                               <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3853.8046719700647!2d120.5508!3d15.4567!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTXCsDI3JzI0LjEiTiAxMjDCsDMzJzAyLjkiRQ!5e0!3m2!1sen!2sph!4v1650000000000!5m2!1sen!2sph"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1923.1030959452097!2d120.5370114!3d15.2565954!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3396eca85b2f8e2d%3A0x57b468e42a8675aa!2sGoshen%20Resort!5e1!3m2!1sen!2sph!4v1712670403893!5m2!1sen!2sph"
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0 }}
@@ -513,11 +511,9 @@ const EnhancedWeddingInvitation = () => {
                           <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-6">
                             <div className="bg-white rounded-xl p-6 shadow-sm">
                               <h3 className={`text-xl text-[#0A5741] mb-4 ${cormorant.className}`}>About the Venue</h3>
+                              <VenueGallery />
                               <p className="text-gray-700 mb-3">
                                 Goshen Hotel and Resort offers a serene and picturesque setting for our special day. Nestled in the heart of Bamban, the venue showcases natural beauty and elegant amenities.
-                              </p>
-                              <p className="text-gray-700">
-                                The ceremony will take place in the Grand Garden, followed by a reception in the Pavilion.
                               </p>
                             </div>
                             
@@ -569,96 +565,7 @@ const EnhancedWeddingInvitation = () => {
                             <p className={`text-lg text-[#0A5741] mb-2 ${cormorant.className}`}>
                               We kindly request our guests to follow the dress code below
                             </p>
-                          </motion.div>
-                          
-                          <motion.div variants={itemVariants} className="bg-white rounded-xl p-6 shadow-sm">
-                            <div className="flex items-center justify-center mb-6">
-                              <div className="h-8 w-8 rounded-full bg-[#8fbc8f] mr-2"></div>
-                              <div className="h-8 w-8 rounded-full bg-[#f5f5dc] mr-2"></div>
-                              <div className="h-8 w-8 rounded-full bg-[#d4af37] mr-2"></div>
-                              <p className="text-lg text-[#0A5741] font-medium ml-2">Sage Green • Cream • Gold</p>
-                            </div>
-                            
-                            <div className="grid md:grid-cols-2 gap-8">
-                              <div className="space-y-4">
-                                <h3 className={`text-lg text-[#0A5741] font-medium ${cormorant.className}`}>
-                                  Ladies
-                                </h3>
-                                <div className="aspect-[3/4] rounded-lg overflow-hidden shadow-md">
-                                  <div className="w-full h-full bg-[#f0f0f0] flex items-center justify-center">
-                                    <Image
-                                      width={250}
-                                      height={100}
-                                      src="/card_design/dress_code/guests.webp"
-                                      alt="Ladies Dress Code"
-                                      className="w-full h-full object-cover"
-                                    />
-                                  </div>
-                                </div>
-                                <ul className="space-y-2 text-gray-700">
-                                  <li>• Long dress or formal attire</li>
-                                  <li>• Preferably in sage green, cream, or gold</li>
-                                  <li>• Elegant heels or dressy flats</li>
-                                </ul>
-                              </div>
-                              
-                              <div className="space-y-4">
-                                <h3 className={`text-lg text-[#0A5741] font-medium ${cormorant.className}`}>
-                                  Gentlemen
-                                </h3>
-                                <div className="aspect-[3/4] rounded-lg overflow-hidden shadow-md">
-                                  <div className="w-full h-full bg-[#f0f0f0] flex items-center justify-center">
-                                    <Image
-                                      width={250}
-                                      height={100}
-                                      src="/card_design/dress_code/guests.webp"
-                                      alt="Gentlemen Dress Code"
-                                      className="w-full h-full object-cover"
-                                    />
-                                  </div>
-                                </div>
-                                <ul className="space-y-2 text-gray-700">
-                                  <li>• Formal suit or Barong Tagalog</li>
-                                  <li>• Coordinating tie or accessories</li>
-                                  <li>• Dress shoes</li>
-                                </ul>
-                              </div>
-                            </div>
-                          </motion.div>
-                          
-                          <motion.div variants={itemVariants} className="bg-white rounded-xl p-6 shadow-sm">
-                            <h3 className={`text-xl text-[#0A5741] mb-4 text-center ${cormorant.className}`}>
-                              For Principal Sponsors
-                            </h3>
-                            <div className="grid md:grid-cols-2 gap-6">
-                              <div>
-                                <h4 className="font-medium text-[#0A5741]">Ninangs</h4>
-                                <p className="text-gray-700 mb-2">Elegant floor-length gown in sage green or cream</p>
-                                <div className="rounded-lg overflow-hidden shadow-sm">
-                                  <Image
-                                    width={250}
-                                    height={100}
-                                    src="/card_design/dress_code/guests.webp"
-                                    alt="Principal Sponsors (Female)"
-                                    className="w-full h-40 object-cover"
-                                  />
-                                </div>
-                              </div>
-                              
-                              <div>
-                                <h4 className="font-medium text-[#0A5741]">Ninongs</h4>
-                                <p className="text-gray-700 mb-2">Classic Barong Tagalog or formal suit</p>
-                                <div className="rounded-lg overflow-hidden shadow-sm">
-                                  <Image
-                                    width={250}
-                                    height={100}
-                                    src="/card_design/dress_code/guests.webp"
-                                    alt="Principal Sponsors (Male)"
-                                    className="w-full h-40 object-cover"
-                                  />
-                                </div>
-                              </div>
-                            </div>
+                            <EnhancedDressCode/>
                           </motion.div>
                         </motion.div>
                       </TabsContent>
@@ -742,42 +649,39 @@ const VenueGallery = () => {
           <div className="p-1">
             <div className="overflow-hidden rounded-xl aspect-video bg-[#f0f0f0]">
               <Image
-                src="/card_design/venue/venue-1.jpg"
-                alt="Venue Image 1"
+                src="/goshen-aerial.jpg"
+                alt="Aerial View"
                 width={600}
                 height={400}
                 className="w-full h-full object-cover"
               />
             </div>
-            <p className="text-center text-sm mt-2">Beautiful garden setup</p>
           </div>
         </CarouselItem>
         <CarouselItem>
           <div className="p-1">
             <div className="overflow-hidden rounded-xl aspect-video bg-[#f0f0f0]">
               <Image
-                src="/card_design/venue/venue-2.jpg"
-                alt="Venue Image 2"
+                src="/goshen.jpg"
+                alt="Front Area"
                 width={600}
                 height={400}
                 className="w-full h-full object-cover"
               />
             </div>
-            <p className="text-center text-sm mt-2">Reception hall</p>
           </div>
         </CarouselItem>
         <CarouselItem>
           <div className="p-1">
             <div className="overflow-hidden rounded-xl aspect-video bg-[#f0f0f0]">
               <Image
-                src="/card_design/venue/venue-3.jpg"
-                alt="Venue Image 3"
+                src="/cafe-roma.webp"
+                alt="Cafe Roma Space"
                 width={600}
                 height={400}
                 className="w-full h-full object-cover"
               />
             </div>
-            <p className="text-center text-sm mt-2">Ceremony location</p>
           </div>
         </CarouselItem>
       </CarouselContent>
