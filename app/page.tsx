@@ -458,7 +458,7 @@ const EnhancedWeddingInvitation = () => {
                               <Gift className="h-6 w-6 text-[#0A5741] mb-2" />
                               <h3 className={`text-lg text-[#0A5741] ${cormorant.className}`}>Gifts</h3>
                               <p className="text-sm text-gray-700">Your presence is the greatest gift.
-                                But if you'd like to honor us with more,
+                                But if you&apos;d like to honor us with more,
                                 a monetary gift would be deeply appreciated
                                 as we begin our journey together.</p>
                             </div>
