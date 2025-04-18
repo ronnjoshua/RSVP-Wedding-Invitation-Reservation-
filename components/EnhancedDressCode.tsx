@@ -149,7 +149,7 @@ const EnhancedDressCode = () => {
             </div>
           </div>
           <p className={`text-center text-[#0A5741] ${cormorant.className}`}>
-            Long dress<br />preferably in sage green
+            Long dress<br />In sage green or similar tones.
           </p>
         </motion.div>
         
@@ -231,7 +231,7 @@ const EnhancedDressCode = () => {
             </div>
           </div>
           <p className={`text-center text-[#0A5741] ${cormorant.className}`}>
-            Elegant ankle-length dress<br />in beige
+            Elegant ankle-length dress<br />In beige or similar tones.                                   
           </p>
         </motion.div>
         

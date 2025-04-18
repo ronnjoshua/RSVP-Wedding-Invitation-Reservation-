@@ -214,7 +214,7 @@ const Reservation = () => {
                                 id="control_number"
                                 {...register("control_number")}
                                 className="block w-full rounded-xl border-2 border-purple-200/80 focus:border-[#0A5741] focus:ring-[#0A5741] py-3 text-lg text-[#0A5741] pl-4 pr-10 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-md"
-                                placeholder="Enter your control number"
+                                placeholder=""
                                 disabled={loading}
                                 onChange={(e) => {
                                   if (!e.target.value.trim()) {

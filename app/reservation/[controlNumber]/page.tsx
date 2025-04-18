@@ -185,10 +185,16 @@ const ReservationPage = ({ params }: { params: { controlNumber: string } }) => {
   <form
     onSubmit={handleSubmit(onSubmit)}
     className="w-full flex flex-col px-8 md:px-12 pt-16 pb-16 z-10 relative"
-    style= {{marginTop: '20%', marginBottom: '-5%'}}
+
   >
           <div className="space-y-6 py-4 flex-1 flex flex-col justify-center">
-            <div className="overflow-hidden">
+
+            <div 
+              className={`bg-white/90 p-6 md:p-8 rounded-2xl shadow-sm border border-purple-200
+                transition-all duration-1000 ease-in-out delay-800
+                ${textAnimationComplete ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+            >
+                        <div className="overflow-hidden">
               <h1 
                 className={`text-3xl md:text-5xl font-['Great_Vibes',cursive] text-[#0A5741] text-center
                   transition-all duration-1000 ease-out delay-500
@@ -197,12 +203,6 @@ const ReservationPage = ({ params }: { params: { controlNumber: string } }) => {
                 Guest Information
               </h1>
             </div>
-
-            <div 
-              className={`bg-white/90 p-6 md:p-8 rounded-2xl shadow-sm border border-purple-200
-                transition-all duration-1000 ease-in-out delay-800
-                ${textAnimationComplete ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-            >
               <div className="mb-6 text-center">
                 <p className="text-lg font-['Cormorant_Garamond',serif] text-[#0A5741]">
                   Reservation: <span className="font-semibold">{verifiedData?.reservation_number || 'Loading...'}</span>

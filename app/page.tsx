@@ -466,7 +466,7 @@ const EnhancedWeddingInvitation = () => {
                             <div className="bg-white rounded-xl p-4 shadow-sm flex flex-col items-center text-center">
                               <Music className="h-6 w-6 text-[#0A5741] mb-2" />
                               <h3 className={`text-lg text-[#0A5741] ${cormorant.className}`}>Music</h3>
-                              <p className="text-sm text-gray-700">Live band and DJ will provide entertainment throughout the evening.</p>
+                              <p className="text-sm text-gray-700">Live music will provide entertainment throughout the evening.</p>
                             </div>
                             
                             <div className="bg-white rounded-xl p-4 shadow-sm flex flex-col items-center text-center">
@@ -522,17 +522,12 @@ const EnhancedWeddingInvitation = () => {
                               <div className="space-y-3">
                                 <div>
                                   <h4 className="font-medium text-[#0A5741]">By Car</h4>
-                                  <p className="text-gray-700 text-sm">1 hour drive from Manila via NLEX</p>
-                                </div>
-                                
-                                <div>
-                                  <h4 className="font-medium text-[#0A5741]">Shuttle Service</h4>
-                                  <p className="text-gray-700 text-sm">Available from designated pickup points</p>
+                                  <p className="text-gray-700 text-sm">2 hour drive from Manila via NLEX</p>
                                 </div>
                                 
                                 <div>
                                   <h4 className="font-medium text-[#0A5741]">Parking</h4>
-                                  <p className="text-gray-700 text-sm">Complimentary valet parking available</p>
+                                  <p className="text-gray-700 text-sm">Ample parking will be provided at the venue.</p>
                                 </div>
                               </div>
                             </div>
@@ -578,9 +573,9 @@ const EnhancedWeddingInvitation = () => {
                         >
                           <motion.div variants={itemVariants} className="text-center">
                             <h2 className={`text-2xl font-medium text-[#0A5741] mb-4 ${cormorant.className}`}>
-                              Répondez Sil Vous Plaît
+                            We kindly request your response to confirm your attendance.
                             </h2>
-                            <p className={`text-lg text-[#0A5741] mb-6 ${cormorant.className}`}>
+                            <p className={`text-center text-lg text-[#0A5741] mb-6 ${cormorant.className}`}>
                               We would be honored to have you join us on our special day
                             </p>
                           </motion.div>
@@ -592,10 +587,7 @@ const EnhancedWeddingInvitation = () => {
                               </h3>
                             </div>
                             <div className="space-y-6">
-                            <p className="text-[#0A5741] text-lg">
-                              We would be honored to have you join us on our special day
-                            </p>
-
+                            <div className="flex justify-center">
                             <Button
                               className="rounded-full shadow-lg 
                                 bg-[#0A5741] text-white
@@ -607,6 +599,7 @@ const EnhancedWeddingInvitation = () => {
                             >
                               Make a Reservation
                             </Button>
+                            </div>
                           </div>
                           </motion.div>
                           
@@ -618,7 +611,7 @@ const EnhancedWeddingInvitation = () => {
                             
                             <Card className="p-4 border-0 shadow-sm">
                               <h3 className="font-medium text-[#0A5741] mb-2">Questions?</h3>
-                              <p className="text-sm text-gray-600">Email: ronette@example.com</p>
+                              <p className="text-sm text-gray-600">Email: nucup53@gmail.com or leinette.tambalo@gmail.com</p>
                             </Card>
                             
                             <Card className="p-4 border-0 shadow-sm">
