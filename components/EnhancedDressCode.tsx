@@ -91,7 +91,6 @@ const EnhancedDressCode = () => {
         variants={isMobile ? mobileItemVariants : itemVariants}
         className={`text-2xl text-[#0A5741] font-medium text-center mb-6 ${cormorant.className}`}
       >
-        Dress Code & Color Palette
       </motion.h2>
       
       {/* Color Palette */}

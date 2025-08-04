@@ -246,7 +246,7 @@ const EnhancedWeddingInvitation = () => {
                       transition={{ duration: 0.5, delay: 0.3 }}
                       className={`text-[#0A5741] text-2xl md:text-3xl tracking-wider font-light ${cormorant.className}`}
                     >
-                      SAVE THE DATE
+                      You are cordially invited to our wedding
                     </motion.h1>
                     
                     <motion.div 
@@ -260,7 +260,7 @@ const EnhancedWeddingInvitation = () => {
                       </p>
                       
                       <p className={`text-[#0A5741] text-2xl font-light ${cormorant.className}`}>
-                        AND
+                        &
                       </p>
                       
                       <p className={`text-[#0A5741] text-5xl md:text-6xl ${greatVibes.className}`}>
@@ -274,27 +274,21 @@ const EnhancedWeddingInvitation = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: 0.7 }}
                     >
-                      <p className={`text-[#0A5741] text-lg tracking-wide font-light ${cormorant.className}`}>
-                        TOGETHER WITH THEIR FAMILIES
-                      </p>
                       
-                      <p className={`text-[#0A5741] text-lg tracking-wide font-light ${cormorant.className}`}>
-                        INVITE YOU TO THEIR WEDDING CELEBRATION
+                      <p className={`text-[#0A5741] text-2xl font-semibold ${cormorant.className}`}>
+                        OCT <span className="text-4xl px-1">24</span> <span className="mx-2">|</span> FRI <span className="mx-2">|</span> 2PM
                       </p>
+
+
                       
-                      <div className="space-y-2">
-                        <p className={`text-[#0A5741] text-2xl font-light ${cormorant.className}`}>
-                          FRIDAY <span className="text-4xl px-2">24</span> AT 2 PM
+                      <div className="text-center text-[#0A5741] text-xl font-light">
+                        <p className={`font-semibold ${cormorant.className}`}>
+                          Goshen Hotel and Resort
                         </p>
-                        
-                        <p className={`text-[#0A5741] text-2xl font-light ${cormorant.className}`}>
-                          OCTOBER 2025
+                        <p className={`${cormorant.className}`}>
+                          Bamban, Tarlac
                         </p>
                       </div>
-                      
-                      <p className={`text-[#0A5741] text-xl font-light ${cormorant.className}`}>
-                        GOSHEN HOTEL AND RESORT BAMBAN, TARLAC
-                      </p>
                     </motion.div>
                     
                     <motion.div 
@@ -435,19 +429,25 @@ const EnhancedWeddingInvitation = () => {
                                 <div className="relative mb-6">
                                   <div className="absolute left-[-22px] top-1 h-4 w-4 rounded-full bg-[#0A5741]"></div>
                                   <p className="font-medium text-[#0A5741]">1:00 PM</p>
-                                  <p className="text-gray-700">Entourage Assembly</p>
+                                  <p className="text-gray-700">Entourage&apos;s assembly</p>
+                                </div>
+
+                                <div className="relative mb-6">
+                                  <div className="absolute left-[-22px] top-1 h-4 w-4 rounded-full bg-[#0A5741]"></div>
+                                  <p className="font-medium text-[#0A5741]">1:30 PM</p>
+                                  <p className="text-gray-700">Guests&apos; assembly</p>
                                 </div>
 
                                 <div className="relative mb-6">
                                   <div className="absolute left-[-22px] top-1 h-4 w-4 rounded-full bg-[#0A5741]"></div>
                                   <p className="font-medium text-[#0A5741]">2:00 PM</p>
-                                  <p className="text-gray-700">Wedding Ceremony</p>
+                                  <p className="text-gray-700">Wedding ceremony</p>
                                 </div>
                                 
                                 <div className="relative mb-6">
                                   <div className="absolute left-[-22px] top-1 h-4 w-4 rounded-full bg-[#0A5741]"></div>
                                   <p className="font-medium text-[#0A5741]">4:30 PM</p>
-                                  <p className="text-gray-700">Reception & Dinner</p>
+                                  <p className="text-gray-700">Reception & dinner</p>
                                 </div>
                               </div>
                             </div>
@@ -455,18 +455,18 @@ const EnhancedWeddingInvitation = () => {
 
                           <motion.div variants={itemVariants} className="grid md:grid-cols-3 gap-4">
                             <div className="bg-white rounded-xl p-4 shadow-sm flex flex-col items-center text-center">
+                              <Music className="h-6 w-6 text-[#0A5741] mb-2" />
+                              <h3 className={`text-lg text-[#0A5741] ${cormorant.className}`}>Photos</h3>
+                              <p className="text-sm text-gray-700">We kindly ask that you put your phones and cameras away during the ceremony. We&apos;d love for you to be fully present with us in this moment, our photographers will be capturing it all, and we promise to share those photos with you soon!</p>
+                            </div>
+
+                            <div className="bg-white rounded-xl p-4 shadow-sm flex flex-col items-center text-center">
                               <Gift className="h-6 w-6 text-[#0A5741] mb-2" />
                               <h3 className={`text-lg text-[#0A5741] ${cormorant.className}`}>Gifts</h3>
                               <p className="text-sm text-gray-700">Your presence is the greatest gift.
                                 But if you&apos;d like to honor us with more,
                                 a monetary gift would be deeply appreciated
                                 as we begin our journey together.</p>
-                            </div>
-                            
-                            <div className="bg-white rounded-xl p-4 shadow-sm flex flex-col items-center text-center">
-                              <Music className="h-6 w-6 text-[#0A5741] mb-2" />
-                              <h3 className={`text-lg text-[#0A5741] ${cormorant.className}`}>Music</h3>
-                              <p className="text-sm text-gray-700">Live music will provide entertainment throughout the evening.</p>
                             </div>
                             
                             <div className="bg-white rounded-xl p-4 shadow-sm flex flex-col items-center text-center">
@@ -527,7 +527,7 @@ const EnhancedWeddingInvitation = () => {
                                 
                                 <div>
                                   <h4 className="font-medium text-[#0A5741]">Parking</h4>
-                                  <p className="text-gray-700 text-sm">Ample parking will be provided at the venue.</p>
+                                  <p className="text-gray-700 text-sm">Limited parking slots will be available at the venue, so early arrival is encouraged.</p>
                                 </div>
                               </div>
                             </div>
@@ -606,7 +606,7 @@ const EnhancedWeddingInvitation = () => {
                           <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <Card className="p-4 border-0 shadow-sm">
                               <h3 className="font-medium text-[#0A5741] mb-2">RSVP Deadline</h3>
-                              <p className="text-sm text-gray-600">August 1, 2025</p>
+                              <p className="text-sm text-gray-600">September 15, 2025</p>
                             </Card>
                             
                             <Card className="p-4 border-0 shadow-sm">
@@ -616,8 +616,12 @@ const EnhancedWeddingInvitation = () => {
                             
                             <Card className="p-4 border-0 shadow-sm">
                               <h3 className="font-medium text-[#0A5741] mb-2">Plus Ones</h3>
-                              <p className="text-sm text-gray-600">Limited to invitation list only</p>
+                              <p className="text-sm text-gray-600">
+                                Limited to the invitation list only. Kindly note this is an adults‑only event.  
+                                For a hassle‑free experience, you may reserve by calling <strong>Goshen at 0915‑776‑9264</strong> or <strong>0968‑729‑8590</strong>.
+                              </p>
                             </Card>
+
                           </motion.div>
                         </motion.div>
                       </TabsContent>
