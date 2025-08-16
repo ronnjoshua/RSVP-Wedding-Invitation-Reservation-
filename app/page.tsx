@@ -472,7 +472,7 @@ const EnhancedWeddingInvitation = () => {
                             <div className="bg-white rounded-xl p-4 shadow-sm flex flex-col items-center text-center">
                               <Calendar className="h-6 w-6 text-[#0A5741] mb-2" />
                               <h3 className={`text-lg text-[#0A5741] ${cormorant.className}`}>RSVP By</h3>
-                              <p className="text-sm text-gray-700">Please respond on or before August 1, 2025</p>
+                              <p className="text-sm text-gray-700">Please respond on or before September 1, 2025</p>
                             </div>
                           </motion.div>
                         </motion.div>
@@ -583,7 +583,7 @@ const EnhancedWeddingInvitation = () => {
                           <motion.div variants={itemVariants} className="bg-white rounded-xl p-8 shadow-sm">
                             <div className="text-center mb-6">
                               <h3 className={`text-xl text-[#0A5741] ${cormorant.className}`}>
-                                Please submit your RSVP by August 1, 2025
+                                Please submit your RSVP by September 1, 2025
                               </h3>
                             </div>
                             <div className="space-y-6">
